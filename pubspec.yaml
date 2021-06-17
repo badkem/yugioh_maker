@@ -1,0 +1,37 @@
+name: yugioh_maker
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.2
+
+  image_picker: ^0.8.0+3
+  screenshot: ^1.2.1
+  image_gallery_saver: ^1.6.9
+  path_provider: ^2.0.2
+  shared_preferences: ^2.0.6
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/images/attribute/
+    - assets/images/card_type/
+    - assets/images/trap_spell_type/
