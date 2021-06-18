@@ -87,7 +87,66 @@ class _HistoryPageState extends State<HistoryPage> {
                         fontWeight: FontWeight.bold),
                   )),
               //Level
-              Positioned(
+              item.type == 8
+              ? Positioned(
+                top: 40,
+                left: 20,
+                child: SizedBox(
+                  height: 12,
+                  child: ListView.builder(
+                      reverse: true,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: item.level,
+                      itemBuilder: (context, i) =>
+                          Image.asset('assets/images/rank.png')),
+                ),
+              )
+              : item.type == 9
+              ? Positioned(
+                top: 40,
+                right: 20,
+                child: Row(
+                  children: [
+                    Text(
+                      '[spell card '.toUpperCase(),
+                      style: TextStyle(
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Image.asset(item.trapSpellType!, height: 12, width: 12,),
+                    Text(
+                      ']'.toUpperCase(),
+                      style: TextStyle(
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              )
+              : item.type == 10
+              ? Positioned(
+                top: 40,
+                right: 20,
+                child: Row(
+                  children: [
+                    Text(
+                      '[trap card '.toUpperCase(),
+                      style: TextStyle(
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Image.asset(item.trapSpellType!, height: 12, width: 12,),
+                    Text(
+                      ']'.toUpperCase(),
+                      style: TextStyle(
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              )
+              : Positioned(
                 top: 40,
                 right: 20,
                 child: SizedBox(

@@ -4,9 +4,11 @@ part of 'model.dart';
 class History {
   History({
     required this.cardType,
+    required this.type,
     required this.attr,
     required this.name,
     this.image,
+    this.trapSpellType,
     required this.nameType,
     required this.desc,
     required this.serialNumber,
@@ -16,14 +18,16 @@ class History {
     required this.def,
   });
 
+  int type;
+  int serialNumber;
+  int level;
   String cardType;
   String attr;
   String name;
   String? image;
+  String? trapSpellType;
   String nameType;
   String desc;
-  int serialNumber;
-  int level;
   String year;
   String atk;
   String def;
@@ -34,7 +38,9 @@ class History {
 
   factory History.fromMap(Map<String, dynamic> json) => History(
     cardType: json["cardType"],
+    type: json["type"],
     attr: json["attr"],
+    trapSpellType: json["trapSpellType"],
     name: json["name"],
     image: json["image"],
     nameType: json["nameType"],
@@ -48,7 +54,9 @@ class History {
 
   Map<String, dynamic> toMap() => {
     "cardType": cardType,
+    "type": type,
     "attr": attr,
+    "trapSpellType": trapSpellType,
     "name": name,
     "image": image,
     "nameType": nameType,

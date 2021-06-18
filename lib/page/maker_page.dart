@@ -98,10 +98,12 @@ class _MakerPageState extends State<MakerPage> {
       widget.storage.saveHistory(
           History(
               cardType: initType.image,
+              type: initType.type,
               attr: initAttr.image,
               level: initLv,
               name: name,
               image: '${_image!.path}',
+              trapSpellType: initTrapSpellType.image,
               nameType: nameType,
               desc: decs,
               serialNumber: number,
