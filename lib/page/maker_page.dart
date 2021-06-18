@@ -102,7 +102,9 @@ class _MakerPageState extends State<MakerPage> {
               attr: initAttr.image,
               level: initLv,
               name: name,
-              image: '${_image!.path}',
+              image: _image != null
+                  ? '${_image!.path}'
+                  : null,
               trapSpellType: initTrapSpellType.image,
               nameType: nameType,
               desc: decs,
@@ -162,7 +164,7 @@ class _MakerPageState extends State<MakerPage> {
                           top: 35,
                           left: 40,
                           child: InkWell(
-                            onTap: () => editName(context),
+                            onTap: () => editName(),
                             child: Text(
                               name.toUpperCase(),
                               style: TextStyle(
@@ -335,7 +337,7 @@ class _MakerPageState extends State<MakerPage> {
                           bottom: 90,
                           left: 40,
                           child: InkWell(
-                            onTap: () => editNameType(context),
+                            onTap: () => editNameType(),
                             child: Text(
                               '[${nameType.toLowerCase()}]',
                               style: TextStyle(
@@ -348,7 +350,7 @@ class _MakerPageState extends State<MakerPage> {
                           bottom: 70,
                           left: 40,
                           child: InkWell(
-                            onTap: () => editDecs(context),
+                            onTap: () => editDecs(),
                             child: Text(
                               decs,
                               style: TextStyle(
@@ -371,7 +373,7 @@ class _MakerPageState extends State<MakerPage> {
                         bottom: 25,
                         right: 35,
                         child: InkWell(
-                          onTap: () => editAtkDef(context),
+                          onTap: () => editAtkDef(),
                           child: Row(
                             children: [
                               Text(
@@ -398,7 +400,7 @@ class _MakerPageState extends State<MakerPage> {
                         bottom: 6,
                         right: 35,
                         child: InkWell(
-                          onTap: () => editYear(context),
+                          onTap: () => editYear(),
                           child: Text(
                             '@$year',
                             style: TextStyle(
@@ -435,7 +437,7 @@ class _MakerPageState extends State<MakerPage> {
         distance: 112.0,
         children: [
           ActionButton(
-            onPressed: () => showType(context),
+            onPressed: () => showType(),
             icon: const Icon(Icons.screen_lock_landscape),
           ),
           ActionButton(
@@ -457,7 +459,7 @@ class _MakerPageState extends State<MakerPage> {
     );
   }
 
-  showType(BuildContext context) {
+  showType() {
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -480,7 +482,7 @@ class _MakerPageState extends State<MakerPage> {
         });
   }
 
-  editName(BuildContext context) {
+  editName() {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -508,7 +510,7 @@ class _MakerPageState extends State<MakerPage> {
             ));
   }
 
-  editNameType(BuildContext context) {
+  editNameType() {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -536,7 +538,7 @@ class _MakerPageState extends State<MakerPage> {
             ));
   }
 
-  editDecs(BuildContext context) {
+  editDecs() {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -564,7 +566,7 @@ class _MakerPageState extends State<MakerPage> {
             ));
   }
 
-  editAtkDef(BuildContext context) {
+  editAtkDef() {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -615,7 +617,7 @@ class _MakerPageState extends State<MakerPage> {
             ));
   }
 
-  editYear(BuildContext context) {
+  editYear() {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -744,4 +746,5 @@ class _MakerPageState extends State<MakerPage> {
           ),
         ));
   }
+
 }
