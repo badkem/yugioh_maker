@@ -17,14 +17,19 @@ class _MakerPageState extends State<MakerPage> {
   String atk = '';
   String def = '';
   String year = '2021';
-  String initCard = 'assets/images/card_type/1.gif';
-  String initAttr = 'assets/images/attribute/Light.png';
   String initImgLv = 'assets/images/level.png';
+  String initRank = 'assets/images/rank.png';
   int fileName = DateTime.now().microsecondsSinceEpoch;
   int initLv = 1;
   int number = 0;
+
   bool attrShow = false;
   bool lvShow = false;
+  bool trapSpellShow = false;
+
+  var initAttr = Attribute(name: 'Light', image: 'assets/images/attribute/Light.png');
+  var initType = CardType(type: 1, name: 'Normal', image: 'assets/images/card_type/1.gif');
+  var initTrapSpellType =  TrapSpellType(name: 'Continuous', image: 'assets/images/trap_spell_type/Continuous.png');
 
   final picker = ImagePicker();
   final scController = ScreenshotController();
@@ -36,15 +41,15 @@ class _MakerPageState extends State<MakerPage> {
   final yearController = TextEditingController();
 
   final cardType = <CardType>[
-    CardType(name: 'Normal', image: 'assets/images/card_type/1.gif'),
-    CardType(name: 'Effect', image: 'assets/images/card_type/2.gif'),
-    CardType(name: 'Fusion', image: 'assets/images/card_type/4.gif'),
-    CardType(name: 'Ritual', image: 'assets/images/card_type/3.gif'),
-    CardType(name: 'Synchro', image: 'assets/images/card_type/6.gif'),
-    CardType(name: 'Token', image: 'assets/images/card_type/7.gif'),
-    CardType(name: 'XYZ', image: 'assets/images/card_type/8.gif'),
-    CardType(name: 'Spell', image: 'assets/images/card_type/9.gif'),
-    CardType(name: 'Trap', image: 'assets/images/card_type/10.gif'),
+    CardType(type: 1, name: 'Normal', image: 'assets/images/card_type/1.gif'),
+    CardType(type: 2, name: 'Effect', image: 'assets/images/card_type/2.gif'),
+    CardType(type: 3, name: 'Fusion', image: 'assets/images/card_type/4.gif'),
+    CardType(type: 4, name: 'Ritual', image: 'assets/images/card_type/3.gif'),
+    CardType(type: 6, name: 'Synchro', image: 'assets/images/card_type/6.gif'),
+    CardType(type: 7, name: 'Token', image: 'assets/images/card_type/7.gif'),
+    CardType(type: 8, name: 'XYZ', image: 'assets/images/card_type/8.gif'),
+    CardType(type: 9, name: 'Spell', image: 'assets/images/card_type/9.gif'),
+    CardType(type: 10, name: 'Trap', image: 'assets/images/card_type/10.gif'),
   ];
 
   final attribute = <Attribute>[
@@ -57,6 +62,15 @@ class _MakerPageState extends State<MakerPage> {
     Attribute(name: 'Wind', image: 'assets/images/attribute/Wind.png'),
     Attribute(name: 'Spell', image: 'assets/images/attribute/Spell.png'),
     Attribute(name: 'Trap', image: 'assets/images/attribute/Trap.png'),
+  ];
+
+  final trapSpellType = <TrapSpellType>[
+    TrapSpellType(name: 'Continuous', image: 'assets/images/trap_spell_type/Continuous.png'),
+    TrapSpellType(name: 'Counter', image: 'assets/images/trap_spell_type/Counter.png'),
+    TrapSpellType(name: 'Equip', image: 'assets/images/trap_spell_type/Equip.png'),
+    TrapSpellType(name: 'Field', image: 'assets/images/trap_spell_type/Field.png'),
+    TrapSpellType(name: 'Quick-Play', image: 'assets/images/trap_spell_type/Quick-Play.png'),
+    TrapSpellType(name: 'Ritual', image: 'assets/images/trap_spell_type/Ritual.png'),
   ];
 
   final levels = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -83,8 +97,8 @@ class _MakerPageState extends State<MakerPage> {
     } finally {
       widget.storage.saveHistory(
           History(
-              cardType: initCard,
-              attr: initAttr,
+              cardType: initType.image,
+              attr: initAttr.image,
               level: initLv,
               name: name,
               image: '${_image!.path}',
@@ -123,7 +137,7 @@ class _MakerPageState extends State<MakerPage> {
                   child: Stack(
                     children: [
                       //Scaffold
-                      Image.asset(initCard),
+                      Image.asset(initType.image),
                       //Image
                       Positioned(
                         left: 42,
@@ -155,7 +169,101 @@ class _MakerPageState extends State<MakerPage> {
                             ),
                           )),
                       //Level
-                      Positioned(
+                      initType.type == 8
+                      ? Positioned(
+                        top: 68,
+                        left: 35,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  lvShow = true;
+                                });
+                              },
+                              child: SizedBox(
+                                height: 22,
+                                child: ListView.builder(
+                                    reverse: true,
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: initLv,
+                                    itemBuilder: (context, i) =>
+                                        Image.asset(initRank)),
+                              ),
+                            ),
+                            buildListLevel(),
+                          ],
+                        ),
+                      )
+                      : initType.type == 9
+                      ? Positioned(
+                        top: 68,
+                        right: 35,
+                        child: Stack(
+                          children: [
+                            InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    trapSpellShow = true;
+                                  });
+                                },
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      '[spell card '.toUpperCase(),
+                                      style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Image.asset(initTrapSpellType.image, height: 22, width: 22,),
+                                    Text(
+                                      ']'.toUpperCase(),
+                                      style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                )),
+                            buildListTrapSpellType(),
+                          ],
+                        ),
+                      )
+                      : initType.type == 10
+                      ? Positioned(
+                        top: 68,
+                        right: 35,
+                        child: Stack(
+                          children: [
+                            InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    trapSpellShow = true;
+                                  });
+                                },
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      '[trap card '.toUpperCase(),
+                                      style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Image.asset(initTrapSpellType.image, height: 22, width: 22,),
+                                    Text(
+                                      ']'.toUpperCase(),
+                                      style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                )),
+                            buildListTrapSpellType(),
+                          ],
+                        ),
+                      )
+                      : Positioned(
                         top: 68,
                         right: 35,
                         child: Column(
@@ -183,7 +291,25 @@ class _MakerPageState extends State<MakerPage> {
                         ),
                       ),
                       //Attribute
-                      Positioned(
+                      initType.type == 9
+                      ? Positioned(
+                          top: 25,
+                          right: 40,
+                          child: Image.asset(
+                            attribute[7].image,
+                            width: 35,
+                            height: 35,
+                          ))
+                      : initType.type == 10
+                      ? Positioned(
+                          top: 25,
+                          right: 40,
+                          child: Image.asset(
+                            attribute[8].image,
+                            width: 35,
+                            height: 35,
+                          ))
+                      : Positioned(
                           top: 25,
                           right: 40,
                           child: Stack(
@@ -195,7 +321,7 @@ class _MakerPageState extends State<MakerPage> {
                                     });
                                   },
                                   child: Image.asset(
-                                    initAttr,
+                                    initAttr.image,
                                     width: 35,
                                     height: 35,
                                   )),
@@ -341,7 +467,7 @@ class _MakerPageState extends State<MakerPage> {
                 return ListTile(
                   onTap: () {
                     setState(() {
-                      initCard = item.image;
+                      initType = item;
                     });
                   },
                   contentPadding: EdgeInsets.all(8),
@@ -535,7 +661,7 @@ class _MakerPageState extends State<MakerPage> {
               return ListTile(
                 onTap: () {
                   setState(() {
-                    initAttr = item.image;
+                    initAttr = item;
                     attrShow = false;
                   });
                 },
@@ -577,6 +703,40 @@ class _MakerPageState extends State<MakerPage> {
                   '$item',
                   style: TextStyle(fontSize: 20),
                 ),
+              );
+            },
+          ),
+        ));
+  }
+
+  Widget buildListTrapSpellType() {
+    return Visibility(
+        visible: trapSpellShow,
+        child: Container(
+          height: 250,
+          width: 150,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: trapSpellType.length,
+            itemBuilder: (context, i) {
+              final item = trapSpellType[i];
+              return ListTile(
+                onTap: () {
+                  setState(() {
+                    initTrapSpellType = item;
+                    trapSpellShow = false;
+                  });
+                },
+                leading: Image.asset(
+                  item.image,
+                  width: 35,
+                  height: 35,
+                ),
+                title: Text(item.name),
               );
             },
           ),
