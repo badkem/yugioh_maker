@@ -56,7 +56,22 @@ class _HistoryPageState extends State<HistoryPage> {
       children: [
         GestureDetector(
           onTap: (){
-            Navigator.pop(context);
+            Navigator.pop(context, History(
+                cardType: item.cardType,
+                type: item.type,
+                attr: item.attr,
+                level: item.level,
+                name: item.name,
+                image: item.image != null
+                    ? '${item.image}'
+                    : null,
+                trapSpellType: item.trapSpellType,
+                nameType: item.nameType,
+                desc: item.desc,
+                serialNumber: item.serialNumber,
+                year: item.year,
+                atk: item.atk,
+                def: item.def));
           },
           child: SizedBox(
             child: Stack(

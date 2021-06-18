@@ -10,7 +10,6 @@ class MakerPage extends StatefulWidget {
 }
 
 class _MakerPageState extends State<MakerPage> {
-  File? _image;
   String name = 'name';
   String nameType = 'card type';
   String decs = 'card description';
@@ -30,6 +29,7 @@ class _MakerPageState extends State<MakerPage> {
   var initAttr = Attribute(name: 'Light', image: 'assets/images/attribute/Light.png');
   var initType = CardType(type: 1, name: 'Normal', image: 'assets/images/card_type/1.gif');
   var initTrapSpellType =  TrapSpellType(name: 'Continuous', image: 'assets/images/trap_spell_type/Continuous.png');
+  var imagePath = File('').path;
 
   final picker = ImagePicker();
   final scController = ScreenshotController();
@@ -79,7 +79,7 @@ class _MakerPageState extends State<MakerPage> {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     setState(() {
       if (pickedFile != null) {
-        _image = File(pickedFile.path);
+        imagePath = File(pickedFile.path).path;
       } else {
         print('No image selected.');
       }
@@ -102,8 +102,8 @@ class _MakerPageState extends State<MakerPage> {
               attr: initAttr.image,
               level: initLv,
               name: name,
-              image: _image != null
-                  ? '${_image!.path}'
+              image: imagePath.isNotEmpty
+                  ? imagePath
                   : null,
               trapSpellType: initTrapSpellType.image,
               nameType: nameType,
@@ -125,6 +125,30 @@ class _MakerPageState extends State<MakerPage> {
     setState(() {
       number = rd.nextInt(900000) + 100000;
     });
+  }
+
+  _navigateAndDisplayHistorySelection() async {
+    final result = await Navigator.push(context,
+      MaterialPageRoute(builder: (context) => HistoryPage(storage: widget.storage)),
+    );
+    if(result != null) {
+      var json = jsonDecode(jsonEncode(result));
+      History history = History.fromJson(json);
+      setState(() {
+        name = history.name;
+        imagePath = history.image!;
+        decs = history.desc;
+        atk = history.atk;
+        def = history.def;
+        year = history.year;
+        initLv = history.level;
+        number = history.serialNumber;
+        initAttr.image = history.attr;
+        initType.type = history.type;
+        initType.image = history.cardType;
+        initTrapSpellType.image = history.trapSpellType!;
+      });
+    }
   }
 
   @override
@@ -149,10 +173,10 @@ class _MakerPageState extends State<MakerPage> {
                         child: SizedBox(
                           height: 249,
                           width: 249,
-                          child: _image == null
+                          child: imagePath.isEmpty
                               ? Center(child: Text('No image selected'))
                               : Image.file(
-                            _image!,
+                            File(imagePath),
                             width: 249,
                             height: 249,
                             fit: BoxFit.fill,
@@ -445,12 +469,7 @@ class _MakerPageState extends State<MakerPage> {
             icon: const Icon(Icons.insert_photo),
           ),
           ActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HistoryPage(storage: widget.storage,)),
-              );
-            },
+            onPressed: () => _navigateAndDisplayHistorySelection(),
             icon: const Icon(Icons.history),
           ),
         ],
