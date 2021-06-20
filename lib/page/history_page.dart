@@ -56,22 +56,44 @@ class _HistoryPageState extends State<HistoryPage> {
       children: [
         GestureDetector(
           onTap: (){
-            Navigator.pop(context, History(
-                cardType: item.cardType,
-                type: item.type,
-                attr: item.attr,
-                level: item.level,
-                name: item.name,
-                image: item.image != null
-                    ? '${item.image}'
-                    : null,
-                trapSpellType: item.trapSpellType,
-                nameType: item.nameType,
-                desc: item.desc,
-                serialNumber: item.serialNumber,
-                year: item.year,
-                atk: item.atk,
-                def: item.def));
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text("Overwrite current card!"),
+                content: Text("Your current card will be replacement by this card!"),
+                actions: [
+                  TextButton(
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  TextButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context, History(
+                          cardType: item.cardType,
+                          type: item.type,
+                          attr: item.attr,
+                          level: item.level,
+                          name: item.name,
+                          image: item.image != null
+                              ? '${item.image}'
+                              : null,
+                          trapSpellType: item.trapSpellType,
+                          nameType: item.nameType,
+                          desc: item.desc,
+                          serialNumber: item.serialNumber,
+                          year: item.year,
+                          atk: item.atk,
+                          def: item.def));
+                    },
+                  )
+                ],
+              ),
+            );
           },
           child: SizedBox(
             child: Stack(
@@ -275,10 +297,32 @@ class _HistoryPageState extends State<HistoryPage> {
         ),
         TextButton.icon(
             onPressed: (){
-              setState(() {
-                items.remove(item);
-              });
-            widget.storage.updateHistory(items.map((e) => e.toJson()).toList());
+              showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text("Delete selected card!"),
+                  content: Text("Your selected card will be delete!"),
+                  actions: [
+                    TextButton(
+                      child: Text('Cancel'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    TextButton(
+                      child: Text('Ok'),
+                      onPressed: () {
+                        setState(() {
+                          items.remove(item);
+                        });
+                        widget.storage.updateHistory(items.map((e) => e.toJson()).toList());
+                        Navigator.pop(context);
+                      },
+                    )
+                  ],
+                ),
+              );
             },
             icon: Icon(Icons.delete),
             label: Text(''))
