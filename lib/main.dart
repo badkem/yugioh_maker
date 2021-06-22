@@ -43,6 +43,13 @@ class ModePage extends StatelessWidget {
                       ));
                 },
                 child: Text('Meme Fusion')),
+            TextButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ExodiaPage()
+                      ));
+                },
+                child: Text('The Forbidden One')),
           ],
         ),
       ),
