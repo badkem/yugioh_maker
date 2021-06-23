@@ -17,3 +17,4 @@ part 'history_page.dart';
 part 'maker_page.dart';
 part 'meme_page.dart';
 part 'exodia_page.dart';
+part '3_card_page.dart';

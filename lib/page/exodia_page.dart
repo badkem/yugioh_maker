@@ -14,6 +14,7 @@ class _ExodiaPageState extends State<ExodiaPage> {
   var isDone = false;
   var isUploadDone = false;
   var isVisible = false;
+
   var imgLink = '';
   var image1Path = File('').path;
   var image2Path = File('').path;

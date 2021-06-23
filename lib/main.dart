@@ -50,6 +50,13 @@ class ModePage extends StatelessWidget {
                       ));
                 },
                 child: Text('The Forbidden One')),
+            TextButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ThreeCardPage(storage: HistoryStorage(),)
+                      ));
+                },
+                child: Text('Three Card')),
           ],
         ),
       ),

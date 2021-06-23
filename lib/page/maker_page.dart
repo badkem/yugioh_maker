@@ -474,7 +474,6 @@ class _MakerPageState extends State<MakerPage> {
           ),
         ],
       ),
-
     );
   }
 
