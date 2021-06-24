@@ -80,7 +80,7 @@ class _PreviewPageState extends State<PreviewPage> {
       appBar: AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
-        title: Text('Share with', style: TextStyle(color: Colors.black54),),
+        title: Text('2/3', style: TextStyle(color: Colors.black54),),
         backgroundColor: Colors.white,
         elevation: 0.5,
         actions: [
@@ -96,25 +96,30 @@ class _PreviewPageState extends State<PreviewPage> {
           children: [
             Image.memory(widget.image, width: width * 0.8,),
             SizedBox(height: height * 0.04,),
-            isUploadDone == false
-                ? TextButton.icon(
-                onPressed: () => _upload(),
-                icon: Icon(Icons.upload_rounded),
-                label: Text('Upload to Imgur'))
-                : TextButton.icon(
-                onPressed: () => _onShare(context),
-                icon: Icon(Icons.upload_rounded),
-                label: Text('Share')),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                isUploadDone == false
+                    ? TextButton.icon(
+                    onPressed: () => _upload(),
+                    icon: Icon(Icons.upload_rounded),
+                    label: Text('Upload to Imgur'))
+                    : TextButton.icon(
+                    onPressed: () => _onShare(context),
+                    icon: Icon(Icons.share),
+                    label: Text('Share')),
+                Visibility(
+                  visible: isUploadDone,
+                  child: TextButton(
+                    onPressed: () => _launchUrl(imgLink),
+                    child: Text('Watch it!'),
+                  ),
+                )
+              ],
+            ),
             Visibility(
               visible: isVisible,
               child: CircularProgressIndicator(),
-            ),
-            Visibility(
-              visible: isUploadDone,
-              child: TextButton(
-                onPressed: () => _launchUrl(imgLink),
-                child: Text('Watch it!'),
-              ),
             ),
           ],
         ),

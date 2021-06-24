@@ -166,10 +166,7 @@ class _MakerPageState extends State<MakerPage> {
         elevation: 0.5,
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: TextButton.icon(
-            onPressed: () => imagePath.isNotEmpty ? _save() : {},
-            icon: Icon(Icons.save_alt, color: imagePath.isNotEmpty ? Colors.blue : Colors.grey,),
-            label: Text('')),
+        title: imagePath.isNotEmpty ? Text('1/3', style: TextStyle(color: Colors.black54),) : Text(''),
         actions: [
           TextButton(
             onPressed: () => imagePath.isNotEmpty ? _toPreview() : {},
@@ -513,7 +510,11 @@ class _MakerPageState extends State<MakerPage> {
                       ),
                     );
                   }),
-            )
+            ),
+            TextButton.icon(
+                onPressed: () => imagePath.isNotEmpty ? _save() : {},
+                icon: Icon(Icons.save_alt, color: imagePath.isNotEmpty ? Colors.blue : Colors.grey,),
+                label: Text('')),
           ],
         ),
       ),
