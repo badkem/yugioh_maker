@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:http_parser/http_parser.dart';
 
 import 'package:dio/dio.dart';
@@ -16,6 +17,4 @@ import '../model/model.dart';
 
 part 'history_page.dart';
 part 'maker_page.dart';
-part 'meme_page.dart';
-part 'exodia_page.dart';
-part '3_card_page.dart';
+part 'preview_page.dart';
