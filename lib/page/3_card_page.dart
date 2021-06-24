@@ -222,27 +222,19 @@ class _ThreeCardPageState extends State<ThreeCardPage> {
     }
   }
 
-  _navigateAndDisplayHistorySelection() async {
-    final result = await Navigator.push(context,
-      MaterialPageRoute(builder: (context) => HistoryPage(storage: widget.storage)),
-    );
-    if(result != null) {
-      var json = jsonDecode(jsonEncode(result));
-      History history = History.fromJson(json);
-      setState(() {
-        name1 = history.name;
-        imagePath_1 = history.image!;
-        decs1 = history.desc;
-        atk1 = history.atk;
-        def1 = history.def;
-        year1 = history.year;
-        initLv1 = history.level;
-        number_1 = history.serialNumber;
-        initAttr_1.image = history.attr;
-        initType_1.type = history.type;
-        initType_1.image = history.cardType;
-        initTrapSpellType_1.image = history.trapSpellType!;
-      });
+  Future<void> _launchUrl(String url) async {
+    if (await canLaunch(url)) {
+      final bool nativeAppLaunchSucceeded = await launch(
+        url,
+        forceSafariVC: false,
+        universalLinksOnly: true,
+      );
+      if (!nativeAppLaunchSucceeded) {
+        await launch(
+          url,
+          forceSafariVC: true,
+        );
+      }
     }
   }
 
@@ -1211,6 +1203,13 @@ class _ThreeCardPageState extends State<ThreeCardPage> {
               Visibility(
                 visible: isVisible,
                 child: CircularProgressIndicator(),
+              ),
+              Visibility(
+                visible: isUploadDone,
+                child: TextButton(
+                  onPressed: () => _launchUrl(imgLink),
+                  child: Text('Watch it!'),
+                ),
               ),
             ],
           ),

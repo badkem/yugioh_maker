@@ -25,11 +25,14 @@ class _MakerPageState extends State<MakerPage> {
   bool attrShow = false;
   bool lvShow = false;
   bool trapSpellShow = false;
+  bool isUploadDone = false;
+  bool isVisible = false;
 
   var initAttr = Attribute(name: 'Light', image: 'assets/images/attribute/Light.png');
   var initType = CardType(type: 1, name: 'Normal', image: 'assets/images/card_type/1.gif');
   var initTrapSpellType =  TrapSpellType(name: 'Continuous', image: 'assets/images/trap_spell_type/Continuous.png');
   var imagePath = File('').path;
+  var imgLink = '';
 
   final picker = ImagePicker();
   final scController = ScreenshotController();
@@ -75,7 +78,7 @@ class _MakerPageState extends State<MakerPage> {
 
   final levels = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-  Future getImage() async {
+  Future _getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     setState(() {
       if (pickedFile != null) {
@@ -86,7 +89,7 @@ class _MakerPageState extends State<MakerPage> {
     });
   }
 
-  void save() {
+  void _save() {
     try {
       scController.capture().then((image) async {
         await ImageGallerySaver.saveImage(image!,
@@ -120,7 +123,7 @@ class _MakerPageState extends State<MakerPage> {
     }
   }
 
-  void randomNumber() {
+  void _randomNumber() {
     var rd = Random();
     setState(() {
       number = rd.nextInt(900000) + 100000;
@@ -151,12 +154,72 @@ class _MakerPageState extends State<MakerPage> {
     }
   }
 
+  void _upload() {
+    scController.capture().then((image) async {
+      var file = FormData.fromMap(
+          {
+            'image': MultipartFile.fromBytes(image!, filename: '$fileName', contentType: MediaType('image','png'))
+          }
+      );
+      try {
+        setState(() {
+          isVisible = true;
+        });
+        final response = await Dio().postUri(Uri.parse('https://api.imgur.com/3/upload'),
+            options: Options(
+                headers: {
+                  'Authorization' : 'Bearer 72222ea47697f34123a1eea53cc5c1a82c2bfd1d',
+                  'Content-Type': 'multipart/form-data'
+                }
+            ),
+            data: file
+        );
+        if(response.statusCode == 200){
+          setState(() {
+            imgLink = response.data['data']['link'];
+            isVisible = false;
+            isUploadDone = true;
+          });
+          print(response.statusMessage);
+        }
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
+
+  _onShare(BuildContext context) async {
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    if (imgLink.isNotEmpty) {
+      await Share.share(imgLink,
+          subject: 'Meme',
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    }
+  }
+
+  Future<void> _launchUrl(String url) async {
+    if (await canLaunch(url)) {
+      final bool nativeAppLaunchSucceeded = await launch(
+        url,
+        forceSafariVC: false,
+        universalLinksOnly: true,
+      );
+      if (!nativeAppLaunchSucceeded) {
+        await launch(
+          url,
+          forceSafariVC: true,
+        );
+      }
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
               child: Screenshot(
@@ -437,7 +500,7 @@ class _MakerPageState extends State<MakerPage> {
                         bottom: 6,
                         left: 35,
                         child: InkWell(
-                          onTap: () => randomNumber(),
+                          onTap: () => _randomNumber(),
                           child: Text(
                             '$number',
                             style: TextStyle(
@@ -450,10 +513,36 @@ class _MakerPageState extends State<MakerPage> {
                 ),
               ),
             ),
-            TextButton.icon(
-                onPressed: () => save(),
-                icon: Icon(Icons.download_rounded),
-                label: Text('Save'))
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                isUploadDone == false
+                    ? TextButton.icon(
+                    onPressed: () => _upload(),
+                    icon: Icon(Icons.upload_rounded),
+                    label: Text('Upload'))
+                    : TextButton.icon(
+                    onPressed: () => _onShare(context),
+                    icon: Icon(Icons.upload_rounded),
+                    label: Text('Share')),
+                TextButton.icon(
+                    onPressed: () => _save(),
+                    icon: Icon(Icons.save_alt),
+                    label: Text('Save')),
+              ],
+            ),
+            Visibility(
+              visible: isVisible,
+              child: CircularProgressIndicator(),
+            ),
+            Visibility(
+              visible: isUploadDone,
+              child: TextButton(
+                onPressed: () => _launchUrl(imgLink),
+                child: Text('Watch it!'),
+              ),
+            ),
           ],
         ),
       ),
@@ -465,7 +554,7 @@ class _MakerPageState extends State<MakerPage> {
             icon: const Icon(Icons.screen_lock_landscape),
           ),
           ActionButton(
-            onPressed: () => getImage(),
+            onPressed: () => _getImage(),
             icon: const Icon(Icons.insert_photo),
           ),
           ActionButton(

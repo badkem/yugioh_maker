@@ -117,6 +117,22 @@ class _ExodiaPageState extends State<ExodiaPage> {
     }
   }
 
+  Future<void> _launchUrl(String url) async {
+    if (await canLaunch(url)) {
+      final bool nativeAppLaunchSucceeded = await launch(
+        url,
+        forceSafariVC: false,
+        universalLinksOnly: true,
+      );
+      if (!nativeAppLaunchSucceeded) {
+        await launch(
+          url,
+          forceSafariVC: true,
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
@@ -252,6 +268,13 @@ class _ExodiaPageState extends State<ExodiaPage> {
               Visibility(
                 visible: isVisible,
                 child: CircularProgressIndicator(),
+              ),
+              Visibility(
+                visible: isUploadDone,
+                child: TextButton(
+                  onPressed: () => _launchUrl(imgLink),
+                  child: Text('Watch it!'),
+                ),
               ),
             ],
           ),
