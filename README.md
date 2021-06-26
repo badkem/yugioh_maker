@@ -8,3 +8,5 @@ There are four mode for you to select (v2 is f*cking better)
 
 ![](https://i.imgur.com/77wwtgO.png)
 
+![](https://i.imgur.com/h2ew1QH.png)
+
