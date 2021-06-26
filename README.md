@@ -2,9 +2,9 @@
 
 There are four mode for you to select (v2 is f*cikng better)
 
-!(https://imgur.com/bztqwrW)
+![](https://i.imgur.com/bztqwrW.png)
 
-!(https://imgur.com/77wwtgO)
+![](https://i.imgur.com/pmGGa8Y.png)
 
-!(https://imgur.com/pmGGa8Y)
+![](https://i.imgur.com/77wwtgO.png)
 
