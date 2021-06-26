@@ -1,6 +1,6 @@
 # Yugioh card maker
 
-There are four mode for you to select (v2 is f*cikng better)
+There are four mode for you to select (v2 is f*cking better)
 
 ![](https://i.imgur.com/bztqwrW.png)
 
