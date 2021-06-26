@@ -2,11 +2,11 @@
 
 There are four mode for you to select (v2 is f*cking better)
 
-![](https://i.imgur.com/bztqwrW.png)
+<a href="url"><img src="https://i.imgur.com/bztqwrW.png" align="left" height="50" width="50" ></a>
 
-![](https://i.imgur.com/pmGGa8Y.png)
+<a href="url"><img src="https://i.imgur.com/pmGGa8Y.png" align="left" height="50" width="50" ></a>
 
-![](https://i.imgur.com/77wwtgO.png)
+<a href="url"><img src="https://i.imgur.com/77wwtgO.png" align="left" height="50" width="50" ></a>
 
-![](https://i.imgur.com/h2ew1QH.png)
+<a href="url"><img src="https://i.imgur.com/h2ew1QH.png" align="left" height="50" width="50" ></a>
 
