@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yugioh_maker/provider/provider.dart';
 import 'page/page.dart';
 
 void main() {
