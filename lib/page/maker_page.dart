@@ -139,12 +139,6 @@ class _MakerPageState extends State<MakerPage> {
   }
 
   @override
-  void initState() {
-    print(widget.images.length);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
@@ -159,21 +153,21 @@ class _MakerPageState extends State<MakerPage> {
         centerTitle: true,
         title: widget.mode == 1
             ? Text(
-          '${widget.images.length + 1}/5',
+          'Exodia',
           style: TextStyle(color: Colors.black54),
         )
             : widget.mode == 2
             ? Text(
-          '${widget.images.length + 1}/2',
+          'Meme fusion',
           style: TextStyle(color: Colors.black54),
         )
             : widget.mode == 3
             ? Text(
-          '${widget.images.length + 1}/3',
+          'Three card',
           style: TextStyle(color: Colors.black54),
         )
             : Text(
-          '${widget.images.length + 1}/2',
+          'Normal',
           style: TextStyle(color: Colors.black54),
         ),
         actions: [
@@ -184,7 +178,8 @@ class _MakerPageState extends State<MakerPage> {
                 color: imagePath.isNotEmpty ? Colors.blue : Colors.grey,
               ),
               label: Text('')),
-          TextButton(
+          imagePath.isNotEmpty
+          ? TextButton(
             onPressed: () {
               if(widget.mode == 0) {
                 _toPreview();
@@ -215,31 +210,42 @@ class _MakerPageState extends State<MakerPage> {
               style: TextStyle(
                   color: Colors.blue),
             ),
+          ) : TextButton(
+            onPressed: () {},
+            child: Text(
+              'Next',
+              style: TextStyle(
+                  color: Colors.grey),
+            ),
           )
-          // TextButton(
-          //   onPressed: () => imagePath.isNotEmpty
-          //       ? {
-          //           widget.mode == 1
-          //               ? _toNextPage(1)
-          //               : widget.mode == 2
-          //                   ? _toPreview(2)
-          //                   : widget.mode == 3
-          //                       ? _toNextPage(3)
-          //                       : _toPreview(0)
-          //         }
-          //       : {},
-          //   child: Text(
-          //     'Next',
-          //     style: TextStyle(
-          //         color: imagePath.isNotEmpty ? Colors.blue : Colors.grey),
-          //   ),
-          // )
         ],
       ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            widget.mode == 1
+                ? Text(
+              '${widget.images.length + 1}/5',
+              style: TextStyle(color: Colors.black54, fontSize: 20),
+            )
+                : widget.mode == 2
+                ? Text(
+              '${widget.images.length + 1}/2',
+              style: TextStyle(color: Colors.black54, fontSize: 20),
+            )
+                : widget.mode == 3
+                ? Text(
+              '${widget.images.length + 1}/3',
+              style: TextStyle(color: Colors.black54, fontSize: 20),
+            )
+                : Text(
+              '${widget.images.length + 1}/2',
+              style: TextStyle(color: Colors.black54, fontSize: 20),
+            ),
+            SizedBox(
+              height: height * 0.025,
+            ),
             widget.mode == 1
                 ? Center(
                     child: Screenshot(
@@ -248,7 +254,9 @@ class _MakerPageState extends State<MakerPage> {
                         child: Stack(
                           children: [
                             //Scaffold
-                            Image.asset(_makerStorage.cardType[0].image),
+                            widget.images.length == 1
+                            ? Image.asset(_makerStorage.cardType[1].image)
+                            : Image.asset(_makerStorage.cardType[0].image),
                             //Image
                             Positioned(
                               left: 42,
@@ -292,7 +300,20 @@ class _MakerPageState extends State<MakerPage> {
                               right: 35,
                               child: SizedBox(
                                 height: 22,
-                                child: Image.asset(_makerStorage.initImgLv),
+                                child: widget.images.length == 1
+                                ? ListView.builder(
+                                    reverse: true,
+                                    shrinkWrap:
+                                    true,
+                                    scrollDirection: Axis
+                                        .horizontal,
+                                    itemCount: 3,
+                                    itemBuilder: (context,
+                                        i) =>
+                                        Image.asset(
+                                            _makerStorage
+                                                .initImgLv))
+                                : Image.asset(_makerStorage.initImgLv),
                               ),
                             ),
                             //Attribute
