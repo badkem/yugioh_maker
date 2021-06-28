@@ -34,6 +34,7 @@ class SelectMode extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => MakerPage(
+                                degrees: [],
                                 mode: 0,
                                 images: [],
                               )));
@@ -45,6 +46,7 @@ class SelectMode extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => MakerPage(
+                                degrees: [],
                                 mode: 1,
                                 images: [],
                               )));
@@ -56,6 +58,7 @@ class SelectMode extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => MakerPage(
+                                degrees: [],
                                 mode: 2,
                                 images: [],
                               )));
@@ -67,11 +70,24 @@ class SelectMode extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => MakerPage(
+                                degrees: [],
                                 mode: 3,
                                 images: [],
                               )));
                 },
-                child: Text('3 card')),
+                child: Text('3 cards')),
+            TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MakerPage(
+                            degrees: [],
+                            mode: 4,
+                            images: [],
+                          )));
+                },
+                child: Text('3 cards stack')),
           ],
         ),
       ),

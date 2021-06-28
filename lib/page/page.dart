@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:http_parser/http_parser.dart';
 
 import 'package:dio/dio.dart';
@@ -17,3 +18,4 @@ import '../model/model.dart';
 part 'history_page.dart';
 part 'maker_page.dart';
 part 'preview_page.dart';
+part 'test_page.dart';

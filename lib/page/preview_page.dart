@@ -2,9 +2,10 @@ part of 'page.dart';
 
 class PreviewPage extends StatefulWidget {
   final List<Uint8List> images;
+  final List<int> degrees;
   final int mode;
 
-  const PreviewPage({Key? key, required this.images, required this.mode})
+  const PreviewPage({Key? key, required this.images, required this.mode, required this.degrees})
       : super(key: key);
 
   @override
@@ -27,6 +28,9 @@ class _PreviewPageState extends State<PreviewPage> {
     if (widget.mode == 3) {
       image = await _getScreenshot();
     }
+    if (widget.mode == 4) {
+      image = await _getScreenshot();
+    }
     var file = FormData.fromMap({
       'image': MultipartFile.fromBytes(
           widget.mode == 1
@@ -34,6 +38,8 @@ class _PreviewPageState extends State<PreviewPage> {
               : widget.mode == 2
                   ? widget.images[0]
                   : widget.mode == 3
+                      ? image!
+                    : widget.mode == 4
                       ? image!
                       : widget.images[0],
           filename: 'image',
@@ -130,6 +136,11 @@ class _PreviewPageState extends State<PreviewPage> {
                   Navigator.pop(context);
                   Navigator.pop(context);
                   break;
+                case 4:
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  break;
               }
             },
             child: Text('Done'),
@@ -187,7 +198,8 @@ class _PreviewPageState extends State<PreviewPage> {
                       widget.images[0],
                       width: width * 0.8,
                     )
-                  : Screenshot(
+                  : widget.mode == 3
+                  ? Screenshot(
             controller: screenController,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -206,9 +218,48 @@ class _PreviewPageState extends State<PreviewPage> {
                 )
               ],
             ),
+          )
+                  : Screenshot(
+            controller: screenController,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Align(
+                  widthFactor: 0.5,
+                  child: RotationTransition(
+                    turns: AlwaysStoppedAnimation(widget.degrees[0] / 360),
+                    child: Image.memory(
+                      widget.images[0],
+                      width: width * 0.3,
+                    ),
+                  ),
+                ),
+                Align(
+                  widthFactor: 0.5,
+                  child: RotationTransition(
+                    turns: AlwaysStoppedAnimation(widget.degrees[1] / 360),
+                    child: Image.memory(
+                      widget.images[1],
+                      width: width * 0.3,
+                    ),
+                  ),
+                ),
+                Align(
+                  widthFactor: 0.5,
+                  child: RotationTransition(
+                    alignment: Alignment(-1, 0),
+                    turns: AlwaysStoppedAnimation(widget.degrees[2] / 360),
+                    child: Image.memory(
+                      widget.images[2],
+                      width: width * 0.3,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(
-            height: height * 0.04,
+            height: height * 0.010,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
