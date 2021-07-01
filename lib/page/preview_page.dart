@@ -4,10 +4,7 @@ class PreviewPage extends StatefulWidget {
   final List<YugiohCard> cards;
   final int mode;
 
-  const PreviewPage(
-      {Key? key,
-      required this.mode,
-      required this.cards})
+  const PreviewPage({Key? key, required this.mode, required this.cards})
       : super(key: key);
 
   @override
@@ -22,6 +19,7 @@ class _PreviewPageState extends State<PreviewPage> {
 
   bool isUploadDone = false;
   bool isVisible = false;
+  bool isDone = true;
 
   void _upload() async {
     if (widget.mode == 1) {
@@ -125,24 +123,24 @@ class _PreviewPageState extends State<PreviewPage> {
                   Navigator.pop(context);
                   break;
                 case 1:
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  Navigator.pop(context, isDone);
+                  Navigator.pop(context, isDone);
+                  Navigator.pop(context, isDone);
+                  Navigator.pop(context, isDone);
+                  Navigator.pop(context, isDone);
                   break;
                 case 2:
                   Navigator.pop(context);
                   break;
                 case 3:
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  Navigator.pop(context, isDone);
+                  Navigator.pop(context, isDone);
+                  Navigator.pop(context, isDone);
                   break;
                 case 4:
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  Navigator.pop(context, isDone);
+                  Navigator.pop(context, isDone);
+                  Navigator.pop(context, isDone);
                   break;
               }
             },
@@ -152,170 +150,198 @@ class _PreviewPageState extends State<PreviewPage> {
       ),
       body: items.isNotEmpty
           ? Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          widget.mode == 0
-              ? Image.memory(
-            widget.cards[0].image,
-            width: width * 0.8,
-          )
-              : widget.mode == 1
-              ? Screenshot(
-            controller: screenController,
-            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                widget.mode == 0
+                    ? Image.memory(
+                        items[0].image,
+                        width: width * 0.8,
+                      )
+                    : widget.mode == 1
+                        ? Screenshot(
+                            controller: screenController,
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.memory(
+                                      items[0].image,
+                                      width: width * 0.3,
+                                    ),
+                                    Image.memory(
+                                      items[1].image,
+                                      width: width * 0.3,
+                                    ),
+                                    Image.memory(
+                                      items[2].image,
+                                      width: width * 0.3,
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.memory(
+                                      items[3].image,
+                                      width: width * 0.3,
+                                    ),
+                                    Image.memory(
+                                      items[4].image,
+                                      width: width * 0.3,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        : widget.mode == 2
+                            ? Image.memory(
+                                items[0].image,
+                                width: width * 0.8,
+                              )
+                            : widget.mode == 3
+                                ? Screenshot(
+                                    controller: screenController,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: items
+                                          .map((e) => Draggable(
+                                                data: e,
+                                                childWhenDragging: SizedBox(
+                                                  width: width * 0.3,
+                                                ),
+                                                feedback: Stack(
+                                                  children: [
+                                                    Image.memory(
+                                                      e.image,
+                                                      width: width * 0.25,
+                                                    ),
+                                                    Image.memory(e.image,
+                                                        width: width * 0.25,
+                                                        color: Colors.red
+                                                            .withOpacity(0.5)),
+                                                  ],
+                                                ),
+                                                child: Image.memory(e.image,
+                                                    width: width * 0.3),
+                                              ))
+                                          .toList(),
+                                    ),
+                                  )
+                                : Screenshot(
+                                    controller: screenController,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: items
+                                          .map((e) => Draggable(
+                                                data: e,
+                                                childWhenDragging: SizedBox(
+                                                  width: width * 0.4,
+                                                ),
+                                                feedback: Stack(
+                                                  children: [
+                                                    Image.memory(
+                                                      e.image,
+                                                      width: width * 0.35,
+                                                    ),
+                                                    Image.memory(e.image,
+                                                        width: width * 0.35,
+                                                        color: Colors.red
+                                                            .withOpacity(0.5)),
+                                                  ],
+                                                ),
+                                                child: Align(
+                                                  widthFactor: 0.5,
+                                                  child: RotationTransition(
+                                                    turns:
+                                                        AlwaysStoppedAnimation(
+                                                            e.degree / 360),
+                                                    child: Image.memory(
+                                                      e.image,
+                                                      width: width * 0.4,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ))
+                                          .toList(),
+                                    ),
+                                  ),
+                SizedBox(
+                  height: height * 0.010,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.memory(
-                      widget.cards[0].image,
-                      width: width * 0.3,
-                    ),
-                    Image.memory(
-                      widget.cards[1].image,
-                      width: width * 0.3,
-                    ),
-                    Image.memory(
-                      widget.cards[2].image,
-                      width: width * 0.3,
+                    isUploadDone == false
+                        ? TextButton.icon(
+                            onPressed: () => _upload(),
+                            icon: Icon(Icons.upload_rounded),
+                            label: Text('Upload to Imgur'))
+                        : TextButton.icon(
+                            onPressed: () => _onShare(context),
+                            icon: Icon(Icons.share),
+                            label: Text('Share')),
+                    Visibility(
+                      visible: isUploadDone,
+                      child: TextButton(
+                        onPressed: () => _launchUrl(imgLink),
+                        child: Text('Watch it!'),
+                      ),
                     )
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.memory(
-                      widget.cards[3].image,
-                      width: width * 0.3,
-                    ),
-                    Image.memory(
-                      widget.cards[4].image,
-                      width: width * 0.3,
-                    ),
-                  ],
-                )
+                Visibility(
+                  visible: isVisible,
+                  child: CircularProgressIndicator(),
+                ),
               ],
+            )
+          : Center(
+              child: Text('Empty!'),
             ),
-          )
-              : widget.mode == 2
-              ? Image.memory(
-            widget.cards[0].image,
-            width: width * 0.8,
-          )
-              : widget.mode == 3
-              ? Screenshot(
-            controller: screenController,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: items.map((e) => Draggable(
-                data: e,
-                childWhenDragging: SizedBox(width: width * 0.3,),
-                feedback: Stack(
-                  children: [
-                    Image.memory(e.image, width: width * 0.25,),
-                    Image.memory(e.image,
-                        width: width * 0.25,
-                        color: Colors.red.withOpacity(0.5)),
-                  ],
-                ),
-                child: Image.memory(e.image, width: width * 0.3),
-              )).toList(),
-            ),
-          )
-              : Screenshot(
-            controller: screenController,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: items.map((e) => Draggable(
-                data: e,
-                childWhenDragging: SizedBox(width: width * 0.4,),
-                feedback: Stack(
-                  children: [
-                    Image.memory(e.image, width: width * 0.35,),
-                    Image.memory(e.image,
-                        width: width * 0.35,
-                        color: Colors.red.withOpacity(0.5)),
-                  ],
-                ),
-                child: Align(
-                  widthFactor: 0.5,
-                  child: RotationTransition(
-                    turns: AlwaysStoppedAnimation(e.degree / 360),
-                    child: Image.memory(e.image, width: width * 0.4,
-                    ),
-                  ),
-                ),
-              )).toList(),
-            ),
-          ),
-          SizedBox(
-            height: height * 0.010,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              isUploadDone == false
-                  ? TextButton.icon(
-                  onPressed: () => _upload(),
-                  icon: Icon(Icons.upload_rounded),
-                  label: Text('Upload to Imgur'))
-                  : TextButton.icon(
-                  onPressed: () => _onShare(context),
-                  icon: Icon(Icons.share),
-                  label: Text('Share')),
-              Visibility(
-                visible: isUploadDone,
-                child: TextButton(
-                  onPressed: () => _launchUrl(imgLink),
-                  child: Text('Watch it!'),
-                ),
-              )
-            ],
-          ),
-          Visibility(
-            visible: isVisible,
-            child: CircularProgressIndicator(),
-          ),
-        ],
-      )
-          : Center(child: Text('Empty!'),),
       bottomSheet: widget.mode == 3
-            ? Container(
-        alignment: Alignment.center,
-        height: height * 0.2,
-        child: DragTarget(
-          onWillAccept: (YugiohCard? data) {
-            return true;
-          },
-          onAccept: (YugiohCard data) {
-            setState(() {
-              items.removeWhere((item) => item == data);
-            });
-          },
-          builder: (BuildContext context, List<YugiohCard?> candidateData, List<dynamic> rejectedData) {
-            return Icon(Icons.delete, size: 35);
-          },
-        ),
-      )
-            : widget.mode == 4
-            ? Container(
-        alignment: Alignment.center,
-        height: height * 0.2,
-        child: DragTarget(
-          onWillAccept: (YugiohCard? data) {
-            return true;
-          },
-          onAccept: (YugiohCard data) {
-            setState(() {
-              items.removeWhere((item) => item == data);
-            });
-          },
-          builder: (BuildContext context, List<YugiohCard?> candidateData, List<dynamic> rejectedData) {
-            return Icon(Icons.delete, size: 35);
-          },
-        ),
-      )
-            : SizedBox(),
+          ? Container(
+              alignment: Alignment.center,
+              height: height * 0.2,
+              child: DragTarget(
+                onWillAccept: (YugiohCard? data) {
+                  return true;
+                },
+                onAccept: (YugiohCard data) {
+                  setState(() {
+                    items.removeWhere((item) => item == data);
+                  });
+                },
+                builder: (BuildContext context, List<YugiohCard?> candidateData,
+                    List<dynamic> rejectedData) {
+                  return Icon(Icons.delete, size: 35);
+                },
+              ),
+            )
+          : widget.mode == 4
+              ? Container(
+                  alignment: Alignment.center,
+                  height: height * 0.2,
+                  child: DragTarget(
+                    onWillAccept: (YugiohCard? data) {
+                      return true;
+                    },
+                    onAccept: (YugiohCard data) {
+                      setState(() {
+                        items.removeWhere((item) => item == data);
+                      });
+                    },
+                    builder: (BuildContext context,
+                        List<YugiohCard?> candidateData,
+                        List<dynamic> rejectedData) {
+                      return Icon(Icons.delete, size: 35);
+                    },
+                  ),
+                )
+              : SizedBox(),
     );
   }
 }
