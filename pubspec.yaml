@@ -20,6 +20,7 @@ dependencies:
   url_launcher: ^6.0.7
   image_gallery_saver: ^1.6.9
   shared_preferences: ^2.0.6
+  matrix_gesture_detector: ^0.2.0-nullsafety.1
   share: ^2.0.4
   dio: ^4.0.0
 

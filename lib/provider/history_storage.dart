@@ -1,4 +1,3 @@
-
 part of 'provider.dart';
 
 class HistoryStorage {

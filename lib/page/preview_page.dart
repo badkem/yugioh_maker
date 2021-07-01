@@ -1,11 +1,13 @@
 part of 'page.dart';
 
 class PreviewPage extends StatefulWidget {
-  final List<Uint8List> images;
-  final List<int> degrees;
+  final List<YugiohCard> cards;
   final int mode;
 
-  const PreviewPage({Key? key, required this.images, required this.mode, required this.degrees})
+  const PreviewPage(
+      {Key? key,
+      required this.mode,
+      required this.cards})
       : super(key: key);
 
   @override
@@ -36,12 +38,12 @@ class _PreviewPageState extends State<PreviewPage> {
           widget.mode == 1
               ? image!
               : widget.mode == 2
-                  ? widget.images[0]
+                  ? widget.cards[0].image
                   : widget.mode == 3
                       ? image!
-                    : widget.mode == 4
-                      ? image!
-                      : widget.images[0],
+                      : widget.mode == 4
+                          ? image!
+                          : widget.cards[0].image,
           filename: 'image',
           contentType: MediaType('image', 'png'))
     });
@@ -102,6 +104,7 @@ class _PreviewPageState extends State<PreviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final items = widget.cards;
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -147,14 +150,15 @@ class _PreviewPageState extends State<PreviewPage> {
           )
         ],
       ),
-      body: Column(
+      body: items.isNotEmpty
+          ? Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           widget.mode == 0
               ? Image.memory(
-                  widget.images[0],
-                  width: width * 0.8,
-                )
+            widget.cards[0].image,
+            width: width * 0.8,
+          )
               : widget.mode == 1
               ? Screenshot(
             controller: screenController,
@@ -164,15 +168,15 @@ class _PreviewPageState extends State<PreviewPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.memory(
-                      widget.images[0],
+                      widget.cards[0].image,
                       width: width * 0.3,
                     ),
                     Image.memory(
-                      widget.images[1],
+                      widget.cards[1].image,
                       width: width * 0.3,
                     ),
                     Image.memory(
-                      widget.images[2],
+                      widget.cards[2].image,
                       width: width * 0.3,
                     )
                   ],
@@ -181,11 +185,11 @@ class _PreviewPageState extends State<PreviewPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.memory(
-                      widget.images[3],
+                      widget.cards[3].image,
                       width: width * 0.3,
                     ),
                     Image.memory(
-                      widget.images[4],
+                      widget.cards[4].image,
                       width: width * 0.3,
                     ),
                   ],
@@ -194,68 +198,54 @@ class _PreviewPageState extends State<PreviewPage> {
             ),
           )
               : widget.mode == 2
-                  ? Image.memory(
-                      widget.images[0],
-                      width: width * 0.8,
-                    )
-                  : widget.mode == 3
-                  ? Screenshot(
+              ? Image.memory(
+            widget.cards[0].image,
+            width: width * 0.8,
+          )
+              : widget.mode == 3
+              ? Screenshot(
             controller: screenController,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.memory(
-                  widget.images[0],
-                  width: width * 0.3,
+              children: items.map((e) => Draggable(
+                data: e,
+                childWhenDragging: SizedBox(width: width * 0.3,),
+                feedback: Stack(
+                  children: [
+                    Image.memory(e.image, width: width * 0.25,),
+                    Image.memory(e.image,
+                        width: width * 0.25,
+                        color: Colors.red.withOpacity(0.5)),
+                  ],
                 ),
-                Image.memory(
-                  widget.images[1],
-                  width: width * 0.3,
-                ),
-                Image.memory(
-                  widget.images[2],
-                  width: width * 0.3,
-                )
-              ],
+                child: Image.memory(e.image, width: width * 0.3),
+              )).toList(),
             ),
           )
-                  : Screenshot(
+              : Screenshot(
             controller: screenController,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Align(
+              children: items.map((e) => Draggable(
+                data: e,
+                childWhenDragging: SizedBox(width: width * 0.4,),
+                feedback: Stack(
+                  children: [
+                    Image.memory(e.image, width: width * 0.35,),
+                    Image.memory(e.image,
+                        width: width * 0.35,
+                        color: Colors.red.withOpacity(0.5)),
+                  ],
+                ),
+                child: Align(
                   widthFactor: 0.5,
                   child: RotationTransition(
-                    turns: AlwaysStoppedAnimation(widget.degrees[0] / 360),
-                    child: Image.memory(
-                      widget.images[0],
-                      width: width * 0.3,
+                    turns: AlwaysStoppedAnimation(e.degree / 360),
+                    child: Image.memory(e.image, width: width * 0.4,
                     ),
                   ),
                 ),
-                Align(
-                  widthFactor: 0.5,
-                  child: RotationTransition(
-                    turns: AlwaysStoppedAnimation(widget.degrees[1] / 360),
-                    child: Image.memory(
-                      widget.images[1],
-                      width: width * 0.3,
-                    ),
-                  ),
-                ),
-                Align(
-                  widthFactor: 0.5,
-                  child: RotationTransition(
-                    alignment: Alignment(-1, 0),
-                    turns: AlwaysStoppedAnimation(widget.degrees[2] / 360),
-                    child: Image.memory(
-                      widget.images[2],
-                      width: width * 0.3,
-                    ),
-                  ),
-                ),
-              ],
+              )).toList(),
             ),
           ),
           SizedBox(
@@ -266,13 +256,13 @@ class _PreviewPageState extends State<PreviewPage> {
             children: [
               isUploadDone == false
                   ? TextButton.icon(
-                      onPressed: () => _upload(),
-                      icon: Icon(Icons.upload_rounded),
-                      label: Text('Upload to Imgur'))
+                  onPressed: () => _upload(),
+                  icon: Icon(Icons.upload_rounded),
+                  label: Text('Upload to Imgur'))
                   : TextButton.icon(
-                      onPressed: () => _onShare(context),
-                      icon: Icon(Icons.share),
-                      label: Text('Share')),
+                  onPressed: () => _onShare(context),
+                  icon: Icon(Icons.share),
+                  label: Text('Share')),
               Visibility(
                 visible: isUploadDone,
                 child: TextButton(
@@ -287,7 +277,45 @@ class _PreviewPageState extends State<PreviewPage> {
             child: CircularProgressIndicator(),
           ),
         ],
-      ),
+      )
+          : Center(child: Text('Empty!'),),
+      bottomSheet: widget.mode == 3
+            ? Container(
+        alignment: Alignment.center,
+        height: height * 0.2,
+        child: DragTarget(
+          onWillAccept: (YugiohCard? data) {
+            return true;
+          },
+          onAccept: (YugiohCard data) {
+            setState(() {
+              items.removeWhere((item) => item == data);
+            });
+          },
+          builder: (BuildContext context, List<YugiohCard?> candidateData, List<dynamic> rejectedData) {
+            return Icon(Icons.delete, size: 35);
+          },
+        ),
+      )
+            : widget.mode == 4
+            ? Container(
+        alignment: Alignment.center,
+        height: height * 0.2,
+        child: DragTarget(
+          onWillAccept: (YugiohCard? data) {
+            return true;
+          },
+          onAccept: (YugiohCard data) {
+            setState(() {
+              items.removeWhere((item) => item == data);
+            });
+          },
+          builder: (BuildContext context, List<YugiohCard?> candidateData, List<dynamic> rejectedData) {
+            return Icon(Icons.delete, size: 35);
+          },
+        ),
+      )
+            : SizedBox(),
     );
   }
 }

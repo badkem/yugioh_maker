@@ -1,8 +1,8 @@
-
 part of 'page.dart';
 
 class HistoryPage extends StatefulWidget {
   final HistoryStorage storage;
+
   const HistoryPage({Key? key, required this.storage}) : super(key: key);
 
   @override
@@ -11,6 +11,9 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   var items = <History>[];
+  late double height, width;
+  bool isLargerScreen = false;
+
   @override
   void initState() {
     getList();
@@ -18,36 +21,45 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   void getList() {
-      widget.storage.getListHistory().then((value) {
-       setState(() {
-         items = value.map((e) => History.fromJson(e)).toList();
-       });
+    widget.storage.getListHistory().then((value) {
+      setState(() {
+        items = value.map((e) => History.fromJson(e)).toList();
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    height = MediaQuery.of(context).size.height;
+    width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: items.isNotEmpty
-          ? SafeArea(
-            child: Container(
-              child: GridView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 3 / 5.4,
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10
-              ),
-              itemCount: items.length,
-              itemBuilder: (context, i){
-                final item = items[i];
-                return _buildBody(item);
-              }),
-            ),
-          )
-          : Center(
-          child: Text('No history found!')),
+          ? OrientationBuilder(
+              builder: (ctx, orientation) {
+                if (width > 400) {
+                  isLargerScreen = true;
+                } else {
+                  isLargerScreen = false;
+                }
+                return SafeArea(
+                  child: Container(
+                    child: GridView.builder(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        shrinkWrap: true,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            childAspectRatio: 3 / 5.4,
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10),
+                        itemCount: items.length,
+                        itemBuilder: (context, i) {
+                          final item = items[i];
+                          return _buildBody(item);
+                        }),
+                  ),
+                );
+              },
+            )
+          : Center(child: Text('No history found!')),
     );
   }
 
@@ -55,13 +67,14 @@ class _HistoryPageState extends State<HistoryPage> {
     return Column(
       children: [
         GestureDetector(
-          onTap: (){
+          onTap: () {
             showDialog(
               barrierDismissible: false,
               context: context,
               builder: (context) => AlertDialog(
                 title: Text("Overwrite current card!"),
-                content: Text("Your current card will be replacement by this card!"),
+                content:
+                    Text("Your current card will be replacement by this card!"),
                 actions: [
                   TextButton(
                     child: Text('Cancel'),
@@ -73,22 +86,23 @@ class _HistoryPageState extends State<HistoryPage> {
                     child: Text('Ok'),
                     onPressed: () {
                       Navigator.pop(context);
-                      Navigator.pop(context, History(
-                          cardType: item.cardType,
-                          type: item.type,
-                          attr: item.attr,
-                          level: item.level,
-                          name: item.name,
-                          image: item.image != null
-                              ? '${item.image}'
-                              : null,
-                          trapSpellType: item.trapSpellType,
-                          nameType: item.nameType,
-                          desc: item.desc,
-                          serialNumber: item.serialNumber,
-                          year: item.year,
-                          atk: item.atk,
-                          def: item.def));
+                      Navigator.pop(
+                          context,
+                          History(
+                              cardType: item.cardType,
+                              type: item.type,
+                              attr: item.attr,
+                              level: item.level,
+                              name: item.name,
+                              image:
+                                  item.image != null ? '${item.image}' : null,
+                              trapSpellType: item.trapSpellType,
+                              nameType: item.nameType,
+                              desc: item.desc,
+                              serialNumber: item.serialNumber,
+                              year: item.year,
+                              atk: item.atk,
+                              def: item.def));
                     },
                   )
                 ],
@@ -102,142 +116,146 @@ class _HistoryPageState extends State<HistoryPage> {
                 Image.asset(item.cardType),
                 //Image
                 Positioned(
-                  left: 25,
-                  bottom: 82,
+                  left: isLargerScreen ? 25 : 20,
+                  bottom: isLargerScreen ? 82 : 70,
                   child: SizedBox(
-                    height: 144,
-                    width: 144,
+                    height: isLargerScreen ? 145 : 126,
+                    width: isLargerScreen ? 145 : 126,
                     child: item.image == null
                         ? SizedBox()
-                        : Image.file(
-                      File(item.image!),
-                      width: 144,
-                      height: 144,
-                      fit: BoxFit.fill,
-                    ),
+                        : Image.file(File(item.image!), fit: BoxFit.fill),
                   ),
                 ),
                 //name
                 Positioned(
-                    top: 20,
-                    left: 25,
+                    top: isLargerScreen ? 20 : 18,
+                    left: isLargerScreen ? 25 : 20,
                     child: Text(
                       item.name.toUpperCase(),
                       style: TextStyle(
                           color: Colors.black54,
-                          fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.bold,
+                          fontSize: isLargerScreen ? 12 : 8),
                     )),
                 //Level
                 item.type == 8
-                ? Positioned(
-                  top: 40,
-                  left: 20,
-                  child: SizedBox(
-                    height: 12,
-                    child: ListView.builder(
-                        reverse: true,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: item.level,
-                        itemBuilder: (context, i) =>
-                            Image.asset('assets/images/rank.png')),
-                  ),
-                )
-                : item.type == 9
-                ? Positioned(
-                  top: 40,
-                  right: 20,
-                  child: Row(
-                    children: [
-                      Text(
-                        '[spell card '.toUpperCase(),
-                        style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Image.asset(item.trapSpellType!, height: 12, width: 12,),
-                      Text(
-                        ']'.toUpperCase(),
-                        style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                )
-                : item.type == 10
-                ? Positioned(
-                  top: 40,
-                  right: 20,
-                  child: Row(
-                    children: [
-                      Text(
-                        '[trap card '.toUpperCase(),
-                        style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Image.asset(item.trapSpellType!, height: 12, width: 12,),
-                      Text(
-                        ']'.toUpperCase(),
-                        style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                )
-                : Positioned(
-                  top: 40,
-                  right: 20,
-                  child: SizedBox(
-                    height: 12,
-                    child: ListView.builder(
-                        reverse: true,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: item.level,
-                        itemBuilder: (context, i) =>
-                            Image.asset('assets/images/level.png')),
-                  ),
-                ),
+                    ? Positioned(
+                        top: isLargerScreen ? 40 : 35,
+                        left: isLargerScreen ? 20 : 16,
+                        child: SizedBox(
+                          height: 12,
+                          child: ListView.builder(
+                              reverse: true,
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: item.level,
+                              itemBuilder: (context, i) =>
+                                  Image.asset('assets/images/rank.png')),
+                        ),
+                      )
+                    : item.type == 9
+                        ? Positioned(
+                            top: isLargerScreen ? 40 : 35,
+                            right: isLargerScreen ? 20 : 16,
+                            child: Row(
+                              children: [
+                                Text(
+                                  '[spell card '.toUpperCase(),
+                                  style: TextStyle(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Image.asset(
+                                  item.trapSpellType!,
+                                  height: 12,
+                                  width: 12,
+                                ),
+                                Text(
+                                  ']'.toUpperCase(),
+                                  style: TextStyle(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          )
+                        : item.type == 10
+                            ? Positioned(
+                                top: isLargerScreen ? 40 : 35,
+                                right: isLargerScreen ? 20 : 16,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      '[trap card '.toUpperCase(),
+                                      style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Image.asset(
+                                      item.trapSpellType!,
+                                      height: 12,
+                                      width: 12,
+                                    ),
+                                    Text(
+                                      ']'.toUpperCase(),
+                                      style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Positioned(
+                                top: isLargerScreen ? 40 : 35,
+                                right: isLargerScreen ? 20 : 16,
+                                child: SizedBox(
+                                  height: 12,
+                                  child: ListView.builder(
+                                      reverse: true,
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: item.level,
+                                      itemBuilder: (context, i) => Image.asset(
+                                          'assets/images/level.png')),
+                                ),
+                              ),
                 //Attribute
                 Positioned(
                   top: 15,
                   right: 20,
-                  child: Image.asset(
-                    item.attr,
-                    width: 20,
-                    height: 20,
-                  ),),
+                  child:
+                      Image.asset(item.attr, height: isLargerScreen ? 20 : 16),
+                ),
                 //Name type
                 Positioned(
-                  bottom: 50,
+                  bottom: isLargerScreen ? 50 : 45,
                   left: 20,
                   child: Text(
                     '[${item.nameType.toLowerCase()}]',
                     style: TextStyle(
-                        fontSize: 12,
+                        fontSize: isLargerScreen ? 12 : 10,
                         color: Colors.black54,
                         fontWeight: FontWeight.bold),
-                  ),),
+                  ),
+                ),
                 //Card desc
                 Positioned(
-                  bottom: 40,
-                  left: 25,
+                  bottom: isLargerScreen ? 40 : 35,
+                  left: isLargerScreen ? 25 : 20,
                   child: Text(
                     item.desc,
                     style: TextStyle(
-                        fontSize: 10,
+                        fontSize: isLargerScreen ? 10 : 8,
                         color: Colors.black54,
                         fontWeight: FontWeight.w400),
-                  ),),
+                  ),
+                ),
                 //Divider
                 Positioned(
                     bottom: 20,
-                    left: 18,
+                    left: isLargerScreen ? 18 : 14,
                     child: Container(
-                      width: 160,
+                      width: isLargerScreen ? 160 : 140,
                       child: Divider(
                         color: Colors.black,
                       ),
@@ -270,18 +288,19 @@ class _HistoryPageState extends State<HistoryPage> {
                 ),
                 //Year
                 Positioned(
-                  bottom: 4,
+                  bottom: isLargerScreen ? 4 : 2,
                   right: 16,
                   child: Text(
                     '@${item.year}',
                     style: TextStyle(
                         fontSize: 8,
-                        color: Colors.black, fontWeight: FontWeight.bold),
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 //Serial number
                 Positioned(
-                  bottom: 4,
+                  bottom: isLargerScreen ? 4 : 2,
                   left: 16,
                   child: Text(
                     '${item.serialNumber}',
@@ -296,7 +315,7 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
         ),
         TextButton.icon(
-            onPressed: (){
+            onPressed: () {
               showDialog(
                 barrierDismissible: false,
                 context: context,
@@ -316,7 +335,8 @@ class _HistoryPageState extends State<HistoryPage> {
                         setState(() {
                           items.remove(item);
                         });
-                        widget.storage.updateHistory(items.map((e) => e.toJson()).toList());
+                        widget.storage.updateHistory(
+                            items.map((e) => e.toJson()).toList());
                         Navigator.pop(context);
                       },
                     )
@@ -328,5 +348,5 @@ class _HistoryPageState extends State<HistoryPage> {
             label: Text(''))
       ],
     );
-}
+  }
 }
