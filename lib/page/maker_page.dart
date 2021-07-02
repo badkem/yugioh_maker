@@ -148,179 +148,202 @@ class _MakerPageState extends State<MakerPage> {
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        leading: TextButton.icon(
-            onPressed: () => _navigateAndDisplayHistorySelection(),
-            icon: Icon(Icons.history),
-            label: Text('')),
-        elevation: 0.5,
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: widget.mode == 1
-            ? Text(
-                'Exodia',
-                style: TextStyle(color: Colors.black54),
-              )
-            : widget.mode == 2
-                ? Text(
-                    'Meme fusion',
-                    style: TextStyle(color: Colors.black54),
-                  )
-                : widget.mode == 3
-                    ? Text(
-                        'Three cards',
-                        style: TextStyle(color: Colors.black54),
-                      )
-                    : widget.mode == 4
-                        ? Text(
-                            'Three cards stack',
-                            style: TextStyle(color: Colors.black54),
-                          )
-                        : Text(
-                            'Normal',
-                            style: TextStyle(color: Colors.black54),
-                          ),
-        actions: [
-          TextButton.icon(
-              onPressed: () => imagePath.isNotEmpty ? _save() : {},
-              icon: Icon(
-                Icons.save_alt,
-                color: imagePath.isNotEmpty ? Colors.blue : Colors.grey,
-              ),
-              label: Text('')),
-          imagePath.isNotEmpty
-              ? TextButton(
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          elevation: 0.5,
+          backgroundColor: Colors.white,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextButton.icon(
                   onPressed: () {
-                    if (widget.mode == 0) {
-                      widget.cards.clear();
-                      _toPreview();
-                    }
-
-                    if (widget.mode == 1) {
-                      if (widget.cards.length < 4) {
-                        _toNextPage();
-                      } else {
-                        _toPreview();
+                    if(imagePath.isNotEmpty) {
+                      showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("Back!"),
+                          content: Text("Your current card will be lost!"),
+                          actions: [
+                            TextButton(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Ok'),
+                              onPressed: () {
+                                if(widget.cards.isNotEmpty) {
+                                  widget.cards.removeLast();
+                                }
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                            )
+                          ],
+                        ),
+                      );
+                    } else {
+                      if(widget.cards.isNotEmpty) {
+                        widget.cards.removeLast();
                       }
-                    }
-
-                    if (widget.mode == 2) {
-                      widget.cards.clear();
-                      _toPreview();
-                    }
-
-                    if (widget.mode == 3) {
-                      if (widget.cards.length < 2) {
-                        _toNextPage();
-                      } else {
-                        _toPreview();
-                      }
-                    }
-
-                    if (widget.mode == 4) {
-                      if (widget.cards.length < 2) {
-                        _toNextPage();
-                      } else {
-                        _toPreview();
-                      }
+                      Navigator.pop(context);
                     }
                   },
-                  child: Text(
-                    'Next',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                )
-              : TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'Next',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                )
-        ],
-      ),
-      body: OrientationBuilder(
-        builder: (ctx, orientation) {
-          if (width > 400) {
-            isLargerScreen = true;
-          } else {
-            isLargerScreen = false;
-          }
-          return isLargerScreen ? _buildMediumLayout() : _buildSmallLayout();
-        },
-      ),
-      bottomSheet: widget.mode == 1
-          ? SizedBox()
-          : widget.mode == 2
-              ? SizedBox()
-              : widget.mode == 3
-                  ? Container(
-                      decoration: BoxDecoration(color: Colors.black12),
-                      height: isLargerScreen ? height * 0.150 : height * 0.140,
-                      width: double.infinity,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          itemCount: _makerStorage.cardType.length,
-                          itemBuilder: (context, index) {
-                            final item = _makerStorage.cardType[index];
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _makerStorage.initType = item;
-                                  });
-                                },
-                                child: Column(
-                                  children: [
-                                    Image.asset(item.image,
-                                        width: isLargerScreen ? 50 : 35),
-                                    Text(
-                                      item.name,
-                                      style: TextStyle(
-                                          fontSize: isLargerScreen ? 18 : 14),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }),
-                    )
-                  : Container(
-                      decoration: BoxDecoration(color: Colors.black12),
-                      height: isLargerScreen ? height * 0.150 : height * 0.140,
-                      width: double.infinity,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          itemCount: _makerStorage.cardType.length,
-                          itemBuilder: (context, index) {
-                            final item = _makerStorage.cardType[index];
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _makerStorage.initType = item;
-                                  });
-                                },
-                                child: Column(
-                                  children: [
-                                    Image.asset(item.image,
-                                        width: isLargerScreen ? 50 : 35),
-                                    Text(
-                                      item.name,
-                                      style: TextStyle(
-                                          fontSize: isLargerScreen ? 18 : 14),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }),
+                  icon: Icon(Icons.arrow_back),
+                  label: Text('')),
+              TextButton.icon(
+                  onPressed: () => _navigateAndDisplayHistorySelection(),
+                  icon: Icon(Icons.history),
+                  label: Text('')),
+            ],
+          ),
+          actions: [
+            TextButton.icon(
+                onPressed: () => imagePath.isNotEmpty ? _save() : {},
+                icon: Icon(
+                  Icons.save_alt,
+                  color: imagePath.isNotEmpty ? Colors.blue : Colors.grey,
+                ),
+                label: Text('')),
+            imagePath.isNotEmpty
+                ? TextButton(
+              onPressed: () {
+                if (widget.mode == 0) {
+                  widget.cards.clear();
+                  _toPreview();
+                }
+
+                if (widget.mode == 1) {
+                  if (widget.cards.length < 4) {
+                    _toNextPage();
+                  } else {
+                    _toPreview();
+                  }
+                }
+
+                if (widget.mode == 2) {
+                  widget.cards.clear();
+                  _toPreview();
+                }
+
+                if (widget.mode == 3) {
+                  if (widget.cards.length < 2) {
+                    _toNextPage();
+                  } else {
+                    _toPreview();
+                  }
+                }
+
+                if (widget.mode == 4) {
+                  if (widget.cards.length < 2) {
+                    _toNextPage();
+                  } else {
+                    _toPreview();
+                  }
+                }
+              },
+              child: Text(
+                'Next',
+                style: TextStyle(color: Colors.blue),
+              ),
+            )
+                : TextButton(
+              onPressed: () {},
+              child: Text(
+                'Next',
+                style: TextStyle(color: Colors.grey),
+              ),
+            )
+          ],
+        ),
+        body: OrientationBuilder(
+          builder: (ctx, orientation) {
+            if (width > 400) {
+              isLargerScreen = true;
+            } else {
+              isLargerScreen = false;
+            }
+            return isLargerScreen ? _buildMediumLayout() : _buildSmallLayout();
+          },
+        ),
+        bottomSheet: widget.mode == 1
+            ? SizedBox()
+            : widget.mode == 2
+            ? SizedBox()
+            : widget.mode == 3
+            ? Container(
+          decoration: BoxDecoration(color: Colors.black12),
+          height: isLargerScreen ? height * 0.150 : height * 0.140,
+          width: double.infinity,
+          child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              itemCount: _makerStorage.cardType.length,
+              itemBuilder: (context, index) {
+                final item = _makerStorage.cardType[index];
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        _makerStorage.initType = item;
+                      });
+                    },
+                    child: Column(
+                      children: [
+                        Image.asset(item.image,
+                            width: isLargerScreen ? 50 : 35),
+                        Text(
+                          item.name,
+                          style: TextStyle(
+                              fontSize: isLargerScreen ? 18 : 14),
+                        ),
+                      ],
                     ),
+                  ),
+                );
+              }),
+        )
+            : Container(
+          decoration: BoxDecoration(color: Colors.black12),
+          height: isLargerScreen ? height * 0.150 : height * 0.140,
+          width: double.infinity,
+          child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              itemCount: _makerStorage.cardType.length,
+              itemBuilder: (context, index) {
+                final item = _makerStorage.cardType[index];
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        _makerStorage.initType = item;
+                      });
+                    },
+                    child: Column(
+                      children: [
+                        Image.asset(item.image,
+                            width: isLargerScreen ? 50 : 35),
+                        Text(
+                          item.name,
+                          style: TextStyle(
+                              fontSize: isLargerScreen ? 18 : 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+        ),
+      ),
     );
   }
 
@@ -3297,3 +3320,4 @@ class _MakerPageState extends State<MakerPage> {
     );
   }
 }
+
