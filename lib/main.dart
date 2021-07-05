@@ -81,12 +81,12 @@ class _SelectModeState extends State<SelectMode> {
                           mode: _selectedItem!.mode, cards: [],)));
                 },
                 child: Text('Go')),
-            // TextButton(
-            //     onPressed: () {
-            //       Navigator.push(context,
-            //           MaterialPageRoute(builder: (ctx) => TestPage()));
-            //     },
-            //     child: Text('Test page'))
+            TextButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (ctx) => TestPage()));
+                },
+                child: Text('Test page'))
           ],
         ),
       ),
