@@ -77,7 +77,7 @@ class _SelectModeState extends State<SelectMode> {
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
                           color: AppColors.dropdownButton.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: Colors.black, style: BorderStyle.solid, width: 2.2),
                       ),
@@ -98,7 +98,7 @@ class _SelectModeState extends State<SelectMode> {
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
                       color: AppColors.dropdownButton.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                           color: Colors.black, style: BorderStyle.solid, width: 2.2),
                     ),

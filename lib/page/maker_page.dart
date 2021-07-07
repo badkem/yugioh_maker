@@ -146,7 +146,7 @@ class _MakerPageState extends State<MakerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final int mode = widget.mode;
+    final mode = widget.mode;
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return WillPopScope(
