@@ -2,10 +2,10 @@ part of 'provider.dart';
 
 class MakerStorage {
   String name = 'name';
-  String nameType = 'card type';
-  String decs = 'card description';
-  String atk = '';
-  String def = '';
+  String nameType = 'name type';
+  String decs = 'description';
+  String atk = '0000';
+  String def = '0000';
   String year = '2021';
   String initImgLv = 'assets/images/level.png';
   String initRank = 'assets/images/rank.png';
@@ -15,21 +15,21 @@ class MakerStorage {
   var initAttr =
       Attribute(name: 'Light', image: 'assets/images/attribute/Light.png');
   var initType =
-      CardType(type: 1, name: 'Normal', image: 'assets/images/card_type/1.gif');
+      CardType(type: 1, name: 'Normal', image: 'assets/images/theme/1.png');
   var initTrapSpellType = TrapSpellType(
       name: 'Continuous',
       image: 'assets/images/trap_spell_type/Continuous.png');
 
   final cardType = <CardType>[
-    CardType(type: 1, name: 'Normal', image: 'assets/images/card_type/1.gif'),
-    CardType(type: 2, name: 'Effect', image: 'assets/images/card_type/2.gif'),
-    CardType(type: 3, name: 'Fusion', image: 'assets/images/card_type/4.gif'),
-    CardType(type: 4, name: 'Ritual', image: 'assets/images/card_type/3.gif'),
-    CardType(type: 6, name: 'Synchro', image: 'assets/images/card_type/6.gif'),
-    CardType(type: 7, name: 'Token', image: 'assets/images/card_type/7.gif'),
-    CardType(type: 8, name: 'XYZ', image: 'assets/images/card_type/8.gif'),
-    CardType(type: 9, name: 'Spell', image: 'assets/images/card_type/9.gif'),
-    CardType(type: 10, name: 'Trap', image: 'assets/images/card_type/10.gif'),
+    CardType(type: 1, name: 'Normal', image: 'assets/images/theme/1.png'),
+    CardType(type: 2, name: 'Effect', image: 'assets/images/theme/2.png'),
+    CardType(type: 3, name: 'Fusion', image: 'assets/images/theme/3.png'),
+    CardType(type: 4, name: 'Ritual', image: 'assets/images/theme/4.png'),
+    CardType(type: 6, name: 'Synchro', image: 'assets/images/theme/6.png'),
+    CardType(type: 7, name: 'Token', image: 'assets/images/theme/7.png'),
+    CardType(type: 8, name: 'XYZ', image: 'assets/images/theme/8.png'),
+    CardType(type: 9, name: 'Spell', image: 'assets/images/theme/9.png'),
+    CardType(type: 10, name: 'Trap', image: 'assets/images/theme/10.png'),
   ];
 
   final attribute = <Attribute>[

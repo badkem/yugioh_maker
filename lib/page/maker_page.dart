@@ -146,20 +146,20 @@ class _MakerPageState extends State<MakerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final int mode = widget.mode;
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async => false,
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          elevation: 0.5,
-          backgroundColor: Colors.white,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              TextButton.icon(
+      child: Stack(
+        children: [
+          Image.asset('assets/images/background.png', fit: BoxFit.cover,),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              elevation: 0.5,
+              backgroundColor: Colors.white.withOpacity(0.3),
+              leading: TextButton.icon(
                   onPressed: () {
                     if(imagePath.isNotEmpty) {
                       showDialog(
@@ -195,154 +195,79 @@ class _MakerPageState extends State<MakerPage> {
                       Navigator.pop(context);
                     }
                   },
-                  icon: Icon(Icons.arrow_back),
+                  icon: Image.asset('assets/images/btn_back.png', width: 30,),
                   label: Text('')),
-              TextButton.icon(
-                  onPressed: () => _navigateAndDisplayHistorySelection(),
-                  icon: Icon(Icons.history),
-                  label: Text('')),
-            ],
-          ),
-          actions: [
-            TextButton.icon(
-                onPressed: () => imagePath.isNotEmpty ? _save() : {},
-                icon: Icon(
-                  Icons.save_alt,
-                  color: imagePath.isNotEmpty ? Colors.blue : Colors.grey,
-                ),
-                label: Text('')),
-            imagePath.isNotEmpty
-                ? TextButton(
-              onPressed: () {
-                if (widget.mode == 0) {
-                  widget.cards.clear();
-                  _toPreview();
-                }
+              centerTitle: true,
+              title: mode == 0
+                  ? Text('normal'.toUpperCase(), style: TextStyle(fontFamily: 'Caps-1', fontSize: 30, color: Colors.black87),)
+                  : mode == 1
+                  ? Text('exodia'.toUpperCase(), style: TextStyle(fontFamily: 'Caps-1', fontSize: 30, color: Colors.black87),)
+                  : mode == 2
+                  ? Text('meme fusion'.toUpperCase(), style: TextStyle(fontFamily: 'Caps-1', fontSize: 30, color: Colors.black87),)
+                  : mode == 3
+                  ? Text('3 cards'.toUpperCase(), style: TextStyle(fontFamily: 'Caps-1', fontSize: 30, color: Colors.black87),)
+                  : mode == 4
+                  ? Text('3 cards stack'.toUpperCase(), style: TextStyle(fontFamily: 'Caps-1', fontSize: 30, color: Colors.black87),)
+                  : SizedBox(),
+              actions: [
+                imagePath.isNotEmpty
+                    ? TextButton.icon(
+                  onPressed: () {
+                    if (mode == 0) {
+                      widget.cards.clear();
+                      _toPreview();
+                    }
 
-                if (widget.mode == 1) {
-                  if (widget.cards.length < 4) {
-                    _toNextPage();
-                  } else {
-                    _toPreview();
-                  }
-                }
+                    if (mode == 1) {
+                      if (widget.cards.length < 4) {
+                        _toNextPage();
+                      } else {
+                        _toPreview();
+                      }
+                    }
 
-                if (widget.mode == 2) {
-                  widget.cards.clear();
-                  _toPreview();
-                }
+                    if (mode == 2) {
+                      widget.cards.clear();
+                      _toPreview();
+                    }
 
-                if (widget.mode == 3) {
-                  if (widget.cards.length < 2) {
-                    _toNextPage();
-                  } else {
-                    _toPreview();
-                  }
-                }
+                    if (mode == 3) {
+                      if (widget.cards.length < 2) {
+                        _toNextPage();
+                      } else {
+                        _toPreview();
+                      }
+                    }
 
-                if (widget.mode == 4) {
-                  if (widget.cards.length < 2) {
-                    _toNextPage();
-                  } else {
-                    _toPreview();
-                  }
+                    if (mode == 4) {
+                      if (widget.cards.length < 2) {
+                        _toNextPage();
+                      } else {
+                        _toPreview();
+                      }
+                    }
+                  },
+                  icon: Image.asset('assets/images/btn_next.png', width: 30,),
+                  label: Text(''),
+                ) : TextButton.icon(
+                  onPressed: () {},
+                  label: Text(''),
+                  icon: Image.asset('assets/images/btn_next.png', width: 30,),
+                )
+              ],
+            ),
+            body: OrientationBuilder(
+              builder: (ctx, orientation) {
+                if (width > 400) {
+                  isLargerScreen = true;
+                } else {
+                  isLargerScreen = false;
                 }
+                return isLargerScreen ? _buildMediumLayout(mode) : _buildSmallLayout();
               },
-              child: Text(
-                'Next',
-                style: TextStyle(color: Colors.blue),
-              ),
-            )
-                : TextButton(
-              onPressed: () {},
-              child: Text(
-                'Next',
-                style: TextStyle(color: Colors.grey),
-              ),
-            )
-          ],
-        ),
-        body: OrientationBuilder(
-          builder: (ctx, orientation) {
-            if (width > 400) {
-              isLargerScreen = true;
-            } else {
-              isLargerScreen = false;
-            }
-            return isLargerScreen ? _buildMediumLayout() : _buildSmallLayout();
-          },
-        ),
-        bottomSheet: widget.mode == 1
-            ? SizedBox()
-            : widget.mode == 2
-            ? SizedBox()
-            : widget.mode == 3
-            ? Container(
-          decoration: BoxDecoration(color: Colors.black12),
-          height: isLargerScreen ? height * 0.150 : height * 0.140,
-          width: double.infinity,
-          child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 5),
-              itemCount: _makerStorage.cardType.length,
-              itemBuilder: (context, index) {
-                final item = _makerStorage.cardType[index];
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        _makerStorage.initType = item;
-                      });
-                    },
-                    child: Column(
-                      children: [
-                        Image.asset(item.image,
-                            width: isLargerScreen ? 50 : 35),
-                        Text(
-                          item.name,
-                          style: TextStyle(
-                              fontSize: isLargerScreen ? 18 : 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-        )
-            : Container(
-          decoration: BoxDecoration(color: Colors.black12),
-          height: isLargerScreen ? height * 0.150 : height * 0.140,
-          width: double.infinity,
-          child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 5),
-              itemCount: _makerStorage.cardType.length,
-              itemBuilder: (context, index) {
-                final item = _makerStorage.cardType[index];
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        _makerStorage.initType = item;
-                      });
-                    },
-                    child: Column(
-                      children: [
-                        Image.asset(item.image,
-                            width: isLargerScreen ? 50 : 35),
-                        Text(
-                          item.name,
-                          style: TextStyle(
-                              fontSize: isLargerScreen ? 18 : 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -376,7 +301,9 @@ class _MakerPageState extends State<MakerPage> {
                             : type == wtf.def
                                 ? TextInputType.number
                                 : TextInputType.text,
-                maxLength: type == wtf.name ? 20 : 4,
+                maxLength: type == wtf.name ? 20
+                          : type == wtf.cardType ? 25
+                          : type == wtf.desc ? 50 : 4,
                 inputFormatters: type == wtf.degree
                     ? <TextInputFormatter>[
                         FilteringTextInputFormatter.allow(RegExp('[0-9-,]+'))
@@ -541,214 +468,221 @@ class _MakerPageState extends State<MakerPage> {
         ));
   }
 
-  _buildMediumLayout() {
+  _buildMediumLayout(int mode) {
     return SafeArea(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          widget.mode == 1
-              ? Text(
-                  '${widget.cards.length + 1}/5',
-                  style: TextStyle(color: Colors.black54, fontSize: 20),
-                )
-              : widget.mode == 2
-                  ? SizedBox()
-                  : widget.mode == 3
-                      ? Text(
-                          '${widget.cards.length + 1}/3',
-                          style: TextStyle(color: Colors.black54, fontSize: 20),
-                        )
-                      : widget.mode == 4
-                          ? Text(
-                              '${widget.cards.length + 1}/3',
-                              style: TextStyle(
-                                  color: Colors.black54, fontSize: 20),
-                            )
-                          : SizedBox(),
-          SizedBox(
-            height: height * 0.025,
+          /// body appbar
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: height * 0.030,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: _navigateAndDisplayHistorySelection,
+                    child: Image.asset('assets/images/collection.png'),
+                  ),
+                  InkWell(
+                    onTap: () => imagePath.isNotEmpty ? _toPreview() : {},
+                    child: Image.asset('assets/images/preview.png'),
+                  ),
+                ],
+              ),
+            ),
           ),
-          widget.mode == 1
+          /// card body
+          mode == 1
               ? Center(
-                  child: Screenshot(
-                    controller: screenController,
-                    child: SizedBox(
-                      child: Stack(
-                        children: [
-                          //Scaffold
-                          widget.cards.length == 1
-                              ? Image.asset(_makerStorage.cardType[1].image)
-                              : Image.asset(_makerStorage.cardType[0].image),
-                          //Image
-                          Positioned(
-                            left: 42,
-                            bottom: 141,
-                            child: InkWell(
-                              onTap: () => _getImage(0),
-                              child: SizedBox(
-                                height: 249,
-                                width: 249,
-                                child: imagePath.isEmpty
-                                    ? Center(
-                                        child: Text('Tap here to select image'))
-                                    : Image.file(
-                                        File(imagePath),
-                                        width: 249,
-                                        height: 249,
-                                        fit: BoxFit.fill,
-                                      ),
-                              ),
-                            ),
-                          ),
-                          //name
-                          Positioned(
-                              top: 35,
-                              left: 40,
-                              child: InkWell(
-                                onTap: () => editInput(wtf.name),
-                                child: Text(
-                                  _makerStorage.name.toUpperCase(),
-                                  style: TextStyle(
-                                      color: _makerStorage.initType.type == 8
-                                          ? Colors.white70
-                                          : Colors.black54,
-                                      fontWeight: FontWeight.bold),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Screenshot(
+                        controller: screenController,
+                        child: Container(
+                          width: constraints.maxWidth / 1.3,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              /// pick file
+                              Positioned(
+                                top: 70,
+                                child: GestureDetector(
+                                  onTap: () => _getImage(0),
+                                  child: Container(
+                                    color: AppColors.placeHolder,
+                                    height: height * 0.3,
+                                    width: width * 0.65,
+                                    child: InteractiveViewer(
+                                      boundaryMargin: const EdgeInsets.all(20.0),
+                                      minScale: 1,
+                                      maxScale: 4,
+                                      child: imagePath.isEmpty
+                                          ? Center(
+                                          child: Text('Tap here to select image', style: TextStyle(
+                                              fontFamily: 'Caps-1',
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w400),))
+                                          : Image.file(File(imagePath)),
+                                    ),
+                                  ),
                                 ),
-                              )),
-                          //Level
-                          Positioned(
-                            top: 68,
-                            right: 35,
-                            child: SizedBox(
-                              height: 22,
-                              child: widget.cards.length == 1
-                                  ? ListView.builder(
+                              ),
+                              /// scaffold
+                              IgnorePointer(
+                                ignoring: true,
+                                child: widget.cards.length == 1
+                                    ? Image.asset(_makerStorage.cardType[1].image)
+                                    : Image.asset(_makerStorage.cardType[0].image),
+                              ),
+                              /// name
+                              Positioned(
+                                  top: 30,
+                                  left: 30,
+                                  child: InkWell(
+                                    onTap: () => editInput(wtf.name),
+                                    child: Text(
+                                      _makerStorage.name.toUpperCase(),
+                                      style: TextStyle(
+                                          color: _makerStorage
+                                              .initType.type == 8
+                                              ? Colors.white70
+                                              : Colors.black87,
+                                          fontFamily: 'Caps-1',
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )),
+                              /// level
+                              Positioned(
+                                top: 58,
+                                right: 35,
+                                child: SizedBox(
+                                  height: 18,
+                                  child: widget.cards.length == 1
+                                      ? ListView.builder(
                                       reverse: true,
                                       shrinkWrap: true,
                                       scrollDirection: Axis.horizontal,
                                       itemCount: 3,
                                       itemBuilder: (context, i) =>
                                           Image.asset(_makerStorage.initImgLv))
-                                  : Image.asset(_makerStorage.initImgLv),
-                            ),
-                          ),
-                          //Attribute
-                          Positioned(
-                              top: 25,
-                              right: 40,
-                              child: Image.asset(
-                                _makerStorage.attribute[1].image,
-                                height: 35,
-                              )),
-                          //Name type
-                          Positioned(
-                              bottom: 90,
-                              left: 40,
-                              child: InkWell(
-                                onTap: () => editInput(wtf.cardType),
-                                child: Text(
-                                  '[${_makerStorage.nameType.toLowerCase()}]',
-                                  style: TextStyle(
-                                      color: Colors.black54,
-                                      fontWeight: FontWeight.bold),
+                                      : Image.asset(_makerStorage.initImgLv),
                                 ),
-                              )),
-                          //Card desc
-                          Positioned(
-                              bottom: 70,
-                              left: 40,
-                              child: InkWell(
-                                onTap: () => editInput(wtf.desc),
-                                child: Text(
-                                  _makerStorage.decs,
-                                  style: TextStyle(
-                                      color: Colors.black54,
-                                      fontWeight: FontWeight.w400),
+                              ),
+                              /// attribute
+                              Positioned(
+                                  top: 24,
+                                  right: 23,
+                                  child: Image.asset(
+                                    _makerStorage.attribute[1].image,
+                                    height: 28,
+                                  )),
+                              /// card name/desc
+                              Positioned(
+                                  bottom: 90,
+                                  left: 40,
+                                  child: InkWell(
+                                    onTap: () => editInput(wtf.cardType),
+                                    child: Text(
+                                      '[ ${_makerStorage.nameType.toLowerCase()} ]',
+                                      style: TextStyle(
+                                          fontFamily: 'Caps-1',
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )),
+                              Positioned(
+                                  bottom: 70,
+                                  left: 40,
+                                  child: InkWell(
+                                    onTap: () => editInput(wtf.desc),
+                                    child: Text(
+                                      _makerStorage.decs,
+                                      style: TextStyle(
+                                          fontFamily: 'Caps-1',
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )),
+                              /// atk/def
+                              Positioned(
+                                bottom: 25,
+                                right: 90,
+                                child: InkWell(
+                                  onTap: () => editInput(wtf.atk),
+                                  child: Text('${_makerStorage.atk}',
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        fontFamily: 'Caps-1',
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                              )),
-                          //Divider
-                          Positioned(
-                              bottom: 40,
-                              left: 28,
-                              child: Container(
-                                width: width * 0.8,
-                                child: Divider(
-                                  color: Colors.black,
-                                ),
-                              )),
-                          //ATK/DEF
-                          Positioned(
-                            bottom: 25,
-                            right: 35,
-                            child: Row(
-                              children: [
-                                InkWell(
+                              ),
+                              Positioned(
+                                bottom: 25,
+                                right: 25,
+                                child: InkWell(
                                   onTap: () => editInput(wtf.atk),
                                   child: Text(
-                                    'ATK/${_makerStorage.atk}'.toUpperCase(),
+                                    '${_makerStorage.def}',
                                     style: TextStyle(
-                                        color: Colors.black54,
+                                        fontSize: 17,
+                                        fontFamily: 'Caps-1',
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                InkWell(
-                                  onTap: () => editInput(wtf.def),
+                              ),
+                              /// num/year
+                              Positioned(
+                                bottom: 6,
+                                right: 25,
+                                child: InkWell(
+                                  onTap: () => editInput(wtf.year),
                                   child: Text(
-                                    'DEF/${_makerStorage.def}'.toUpperCase(),
+                                    '${_makerStorage.year}',
                                     style: TextStyle(
-                                        color: Colors.black54,
+                                        color: _makerStorage
+                                            .initType.type == 8
+                                            ? Colors.white70
+                                            : Colors.black,
+                                        fontSize: 18,
+                                        fontFamily: 'Caps-1',
                                         fontWeight: FontWeight.bold),
                                   ),
-                                )
-                              ],
-                            ),
-                          ),
-                          //Year
-                          Positioned(
-                            bottom: 6,
-                            right: 35,
-                            child: InkWell(
-                              onTap: () => editInput(wtf.year),
-                              child: Text(
-                                '@${_makerStorage.year}',
-                                style: TextStyle(
-                                    color: _makerStorage.initType.type == 8
-                                        ? Colors.white70
-                                        : Colors.black,
-                                    fontWeight: FontWeight.bold),
+                                ),
                               ),
-                            ),
-                          ),
-                          //Serial number
-                          Positioned(
-                            bottom: 6,
-                            left: 35,
-                            child: InkWell(
-                              onTap: () => _randomNumber(),
-                              child: Text(
-                                '${_makerStorage.number}',
-                                style: TextStyle(
-                                    color: _makerStorage.initType.type == 8
-                                        ? Colors.white70
-                                        : Colors.black,
-                                    fontWeight: FontWeight.bold),
+                              Positioned(
+                                bottom: 6,
+                                left: 25,
+                                child: InkWell(
+                                  onTap: () => _randomNumber(),
+                                  child: Text(
+                                    '${_makerStorage.number}',
+                                    style: TextStyle(
+                                        color: _makerStorage
+                                            .initType.type == 8
+                                            ? Colors.white70
+                                            : Colors.black,
+                                        fontSize: 18,
+                                        fontFamily: 'Caps-1',
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
                 )
-              : widget.mode == 2
+              : mode == 2
                   ? Center(
                       child: Screenshot(
                         controller: screenController,
                         child: Container(
-                          color: Colors.white38,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -761,7 +695,7 @@ class _MakerPageState extends State<MakerPage> {
                                     child: Container(
                                       height: height * 0.18,
                                       width: width * 0.35,
-                                      color: Colors.grey.withOpacity(0.2),
+                                      color: AppColors.placeHolder.withOpacity(0.95),
                                       child: imagePath.isEmpty
                                           ? Center(child: Text('?'))
                                           : Image.file(
@@ -777,7 +711,7 @@ class _MakerPageState extends State<MakerPage> {
                                     child: Container(
                                       height: height * 0.18,
                                       width: width * 0.35,
-                                      color: Colors.grey.withOpacity(0.2),
+                                      color: AppColors.placeHolder.withOpacity(0.95),
                                       child: image1Path.isEmpty
                                           ? Center(child: Text('?'))
                                           : Image.file(
@@ -805,7 +739,7 @@ class _MakerPageState extends State<MakerPage> {
                                 child: Container(
                                   height: height * 0.25,
                                   width: width * 0.50,
-                                  color: Colors.grey.withOpacity(0.2),
+                                  color: AppColors.placeHolder.withOpacity(0.95),
                                   child: image2Path.isEmpty
                                       ? Center(child: Text('?'))
                                       : Image.file(
@@ -821,234 +755,857 @@ class _MakerPageState extends State<MakerPage> {
                         ),
                       ),
                     )
-                  : widget.mode == 3
+                  : mode == 3
                       ? Center(
-                          child: Screenshot(
-                            controller: screenController,
-                            child: SizedBox(
-                              child: Stack(
-                                children: [
-                                  //Scaffold
-                                  Image.asset(_makerStorage.initType.image),
-                                  //Image
-                                  Positioned(
-                                    left: 42,
-                                    bottom: 141,
-                                    child: InkWell(
-                                      onTap: () => _getImage(0),
-                                      child: SizedBox(
-                                        height: 249,
-                                        width: 249,
-                                        child: imagePath.isEmpty
-                                            ? Center(
-                                                child: Text(
-                                                    'Tap here to select image'))
-                                            : Image.file(
-                                                File(imagePath),
-                                                width: 249,
-                                                height: 249,
-                                                fit: BoxFit.fill,
-                                              ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Screenshot(
+                  controller: screenController,
+                  child: Container(
+                    width: constraints.maxWidth / 1.3,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        /// pick file
+                        Positioned(
+                          top: 70,
+                          child: GestureDetector(
+                            onTap: () => _getImage(0),
+                            child: Container(
+                              color: AppColors.placeHolder,
+                              height: height * 0.3,
+                              width: width * 0.65,
+                              child: InteractiveViewer(
+                                boundaryMargin: const EdgeInsets.all(20.0),
+                                minScale: 1,
+                                maxScale: 4,
+                                child: imagePath.isEmpty
+                                    ? Center(
+                                    child: Text('Tap here to select image', style: TextStyle(
+                                        fontFamily: 'Caps-1',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400),))
+                                    : Image.file(File(imagePath)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        /// scaffold
+                        IgnorePointer(
+                          ignoring: true,
+                          child: Image.asset(_makerStorage.initType.image),
+                        ),
+                        /// name
+                        Positioned(
+                            top: 30,
+                            left: 30,
+                            child: InkWell(
+                              onTap: () => editInput(wtf.name),
+                              child: Text(
+                                _makerStorage.name.toUpperCase(),
+                                style: TextStyle(
+                                    color: _makerStorage
+                                        .initType.type == 8
+                                        ? Colors.white70
+                                        : Colors.black87,
+                                    fontFamily: 'Caps-1',
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                        /// level
+                        _makerStorage.initType.type == 8
+                            ? Positioned(
+                          top: 58,
+                          left: 35,
+                          child: Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    lvShow = true;
+                                  });
+                                },
+                                child: SizedBox(
+                                  height: 18,
+                                  child: ListView.builder(
+                                      reverse: true,
+                                      shrinkWrap: true,
+                                      scrollDirection:
+                                      Axis.horizontal,
+                                      itemCount:
+                                      _makerStorage
+                                          .initLv,
+                                      itemBuilder: (context,
+                                          i) =>
+                                          Image.asset(
+                                              _makerStorage
+                                                  .initRank)),
+                                ),
+                              ),
+                              buildListLevel(),
+                            ],
+                          ),
+                        )
+                            : _makerStorage.initType.type == 9
+                            ? Positioned(
+                          top: 58,
+                          right: 35,
+                          child: Stack(
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      trapSpellShow = true;
+                                    });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        '[ spell card '
+                                            .toUpperCase(),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                    ),
-                                  ),
-                                  //name
-                                  Positioned(
-                                      top: 35,
-                                      left: 40,
-                                      child: InkWell(
-                                        onTap: () => editInput(wtf.name),
-                                        child: Text(
-                                          _makerStorage.name.toUpperCase(),
-                                          style: TextStyle(
-                                              color:
-                                                  _makerStorage.initType.type ==
-                                                          8
-                                                      ? Colors.white70
-                                                      : Colors.black54,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      )),
-                                  //Level
-                                  _makerStorage.initType.type == 8
-                                      ? Positioned(
-                                          top: 68,
-                                          left: 35,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    lvShow = true;
-                                                  });
-                                                },
-                                                child: SizedBox(
-                                                  height: 22,
-                                                  child: ListView.builder(
-                                                      reverse: true,
-                                                      shrinkWrap: true,
-                                                      scrollDirection:
-                                                          Axis.horizontal,
-                                                      itemCount:
-                                                          _makerStorage.initLv,
-                                                      itemBuilder: (context,
-                                                              i) =>
-                                                          Image.asset(
-                                                              _makerStorage
-                                                                  .initRank)),
+                                      Image.asset(
+                                          _makerStorage
+                                              .initTrapSpellType
+                                              .image,
+                                          height: 20),
+                                      Text(
+                                        ' ]'.toUpperCase(),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  )),
+                              buildListTrapSpellType(),
+                            ],
+                          ),
+                        )
+                            : _makerStorage.initType.type == 10
+                            ? Positioned(
+                          top: 58,
+                          right: 35,
+                          child: Stack(
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      trapSpellShow =
+                                      true;
+                                    });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        '[ trap card '.toUpperCase(),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Image.asset(
+                                          _makerStorage
+                                              .initTrapSpellType
+                                              .image,
+                                          height: 20),
+                                      Text(
+                                        ' ]'.toUpperCase(),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  )),
+                              buildListTrapSpellType(),
+                            ],
+                          ),
+                        )
+                            : Positioned(
+                          top: 58,
+                          right: 35,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    lvShow = true;
+                                  });
+                                },
+                                child: SizedBox(
+                                  height: 18,
+                                  child: ListView.builder(
+                                      reverse: true,
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount:
+                                      _makerStorage.initLv,
+                                      itemBuilder: (context, i) =>
+                                          Image.asset(
+                                              _makerStorage
+                                                  .initImgLv)),
+                                ),
+                              ),
+                              buildListLevel(),
+                            ],
+                          ),
+                        ),
+                        /// attribute
+                        _makerStorage.initType.type == 9
+                            ? SizedBox()
+                            : _makerStorage.initType.type == 10
+                            ? SizedBox()
+                            : Positioned(
+                            top: 24,
+                            right: 23,
+                            child: Stack(
+                              children: [
+                                InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        attrShow = true;
+                                      });
+                                    },
+                                    child: Image.asset(
+                                      _makerStorage.initAttr.image,
+                                      height: 28,
+                                    )),
+                                buildListAttr(),
+                              ],
+                            )),
+                        /// card name/desc
+                        Positioned(
+                            bottom: 90,
+                            left: 40,
+                            child: InkWell(
+                              onTap: () => editInput(wtf.cardType),
+                              child: Text(
+                                '[ ${_makerStorage.nameType.toLowerCase()} ]',
+                                style: TextStyle(
+                                    fontFamily: 'Caps-1',
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                        Positioned(
+                            bottom: 70,
+                            left: 40,
+                            child: InkWell(
+                              onTap: () => editInput(wtf.desc),
+                              child: Text(
+                                _makerStorage.decs,
+                                style: TextStyle(
+                                    fontFamily: 'Caps-1',
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                        /// atk/def
+                        Positioned(
+                          bottom: 25,
+                          right: 90,
+                          child: InkWell(
+                            onTap: () => editInput(wtf.atk),
+                            child: Text('${_makerStorage.atk}',
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  fontFamily: 'Caps-1',
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 25,
+                          right: 25,
+                          child: InkWell(
+                            onTap: () => editInput(wtf.atk),
+                            child: Text(
+                              '${_makerStorage.def}',
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  fontFamily: 'Caps-1',
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        /// num/year
+                        Positioned(
+                          bottom: 6,
+                          right: 25,
+                          child: InkWell(
+                            onTap: () => editInput(wtf.year),
+                            child: Text(
+                              '${_makerStorage.year}',
+                              style: TextStyle(
+                                  color: _makerStorage
+                                      .initType.type == 8
+                                      ? Colors.white70
+                                      : Colors.black,
+                                  fontSize: 18,
+                                  fontFamily: 'Caps-1',
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 6,
+                          left: 25,
+                          child: InkWell(
+                            onTap: () => _randomNumber(),
+                            child: Text(
+                              '${_makerStorage.number}',
+                              style: TextStyle(
+                                  color: _makerStorage
+                                      .initType.type == 8
+                                      ? Colors.white70
+                                      : Colors.black,
+                                  fontSize: 18,
+                                  fontFamily: 'Caps-1',
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          )
+                      : mode == 4
+                          ? Center(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Screenshot(
+                  controller: screenController,
+                  child: Container(
+                    width: constraints.maxWidth / 1.3,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        /// pick file
+                        Positioned(
+                          top: 70,
+                          child: GestureDetector(
+                            onTap: () => _getImage(0),
+                            child: Container(
+                              color: AppColors.placeHolder,
+                              height: height * 0.3,
+                              width: width * 0.65,
+                              child: InteractiveViewer(
+                                boundaryMargin: const EdgeInsets.all(20.0),
+                                minScale: 1,
+                                maxScale: 4,
+                                child: imagePath.isEmpty
+                                    ? Center(
+                                    child: Text('Tap here to select image', style: TextStyle(
+                                        fontFamily: 'Caps-1',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400),))
+                                    : Image.file(File(imagePath)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        /// scaffold
+                        IgnorePointer(
+                          ignoring: true,
+                          child: Image.asset(_makerStorage.initType.image),
+                        ),
+                        /// name
+                        Positioned(
+                            top: 30,
+                            left: 30,
+                            child: InkWell(
+                              onTap: () => editInput(wtf.name),
+                              child: Text(
+                                _makerStorage.name.toUpperCase(),
+                                style: TextStyle(
+                                    color: _makerStorage
+                                        .initType.type == 8
+                                        ? Colors.white70
+                                        : Colors.black87,
+                                    fontFamily: 'Caps-1',
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                        /// level
+                        _makerStorage.initType.type == 8
+                            ? Positioned(
+                          top: 58,
+                          left: 35,
+                          child: Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    lvShow = true;
+                                  });
+                                },
+                                child: SizedBox(
+                                  height: 18,
+                                  child: ListView.builder(
+                                      reverse: true,
+                                      shrinkWrap: true,
+                                      scrollDirection:
+                                      Axis.horizontal,
+                                      itemCount:
+                                      _makerStorage
+                                          .initLv,
+                                      itemBuilder: (context,
+                                          i) =>
+                                          Image.asset(
+                                              _makerStorage
+                                                  .initRank)),
+                                ),
+                              ),
+                              buildListLevel(),
+                            ],
+                          ),
+                        )
+                            : _makerStorage.initType.type == 9
+                            ? Positioned(
+                          top: 58,
+                          right: 35,
+                          child: Stack(
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      trapSpellShow = true;
+                                    });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        '[ spell card '
+                                            .toUpperCase(),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Image.asset(
+                                          _makerStorage
+                                              .initTrapSpellType
+                                              .image,
+                                          height: 20),
+                                      Text(
+                                        ' ]'.toUpperCase(),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  )),
+                              buildListTrapSpellType(),
+                            ],
+                          ),
+                        )
+                            : _makerStorage.initType.type == 10
+                            ? Positioned(
+                          top: 58,
+                          right: 35,
+                          child: Stack(
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      trapSpellShow =
+                                      true;
+                                    });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        '[ trap card '.toUpperCase(),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Image.asset(
+                                          _makerStorage
+                                              .initTrapSpellType
+                                              .image,
+                                          height: 20),
+                                      Text(
+                                        ' ]'.toUpperCase(),
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  )),
+                              buildListTrapSpellType(),
+                            ],
+                          ),
+                        )
+                            : Positioned(
+                          top: 58,
+                          right: 35,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    lvShow = true;
+                                  });
+                                },
+                                child: SizedBox(
+                                  height: 18,
+                                  child: ListView.builder(
+                                      reverse: true,
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount:
+                                      _makerStorage.initLv,
+                                      itemBuilder: (context, i) =>
+                                          Image.asset(
+                                              _makerStorage
+                                                  .initImgLv)),
+                                ),
+                              ),
+                              buildListLevel(),
+                            ],
+                          ),
+                        ),
+                        /// attribute
+                        _makerStorage.initType.type == 9
+                            ? SizedBox()
+                            : _makerStorage.initType.type == 10
+                            ? SizedBox()
+                            : Positioned(
+                            top: 24,
+                            right: 23,
+                            child: Stack(
+                              children: [
+                                InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        attrShow = true;
+                                      });
+                                    },
+                                    child: Image.asset(
+                                      _makerStorage.initAttr.image,
+                                      height: 28,
+                                    )),
+                                buildListAttr(),
+                              ],
+                            )),
+                        /// card name/desc
+                        Positioned(
+                            bottom: 90,
+                            left: 40,
+                            child: InkWell(
+                              onTap: () => editInput(wtf.cardType),
+                              child: Text(
+                                '[ ${_makerStorage.nameType.toLowerCase()} ]',
+                                style: TextStyle(
+                                    fontFamily: 'Caps-1',
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                        Positioned(
+                            bottom: 70,
+                            left: 40,
+                            child: InkWell(
+                              onTap: () => editInput(wtf.desc),
+                              child: Text(
+                                _makerStorage.decs,
+                                style: TextStyle(
+                                    fontFamily: 'Caps-1',
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                        /// atk/def
+                        Positioned(
+                          bottom: 25,
+                          right: 90,
+                          child: InkWell(
+                            onTap: () => editInput(wtf.atk),
+                            child: Text('${_makerStorage.atk}',
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  fontFamily: 'Caps-1',
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 25,
+                          right: 25,
+                          child: InkWell(
+                            onTap: () => editInput(wtf.atk),
+                            child: Text(
+                              '${_makerStorage.def}',
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  fontFamily: 'Caps-1',
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        /// num/year
+                        Positioned(
+                          bottom: 6,
+                          right: 25,
+                          child: InkWell(
+                            onTap: () => editInput(wtf.year),
+                            child: Text(
+                              '${_makerStorage.year}',
+                              style: TextStyle(
+                                  color: _makerStorage
+                                      .initType.type == 8
+                                      ? Colors.white70
+                                      : Colors.black,
+                                  fontSize: 18,
+                                  fontFamily: 'Caps-1',
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 6,
+                          left: 25,
+                          child: InkWell(
+                            onTap: () => _randomNumber(),
+                            child: Text(
+                              '${_makerStorage.number}',
+                              style: TextStyle(
+                                  color: _makerStorage
+                                      .initType.type == 8
+                                      ? Colors.white70
+                                      : Colors.black,
+                                  fontSize: 18,
+                                  fontFamily: 'Caps-1',
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          )
+                          : Center(
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return Screenshot(
+                                    controller: screenController,
+                                    child: Container(
+                                      width: constraints.maxWidth / 1.3,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          /// pick file
+                                          Positioned(
+                                            top: 70,
+                                            child: GestureDetector(
+                                              onTap: () => _getImage(0),
+                                              child: Container(
+                                                color: AppColors.placeHolder,
+                                                height: height * 0.3,
+                                                width: width * 0.65,
+                                                child: InteractiveViewer(
+                                                  boundaryMargin: const EdgeInsets.all(20.0),
+                                                  minScale: 1,
+                                                  maxScale: 4,
+                                                  child: imagePath.isEmpty
+                                                      ? Center(
+                                                      child: Text('Tap here to select image', style: TextStyle(
+                                                          fontFamily: 'Caps-1',
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight.w400),))
+                                                      : Image.file(File(imagePath)),
                                                 ),
                                               ),
-                                              buildListLevel(),
-                                            ],
+                                            ),
                                           ),
-                                        )
-                                      : _makerStorage.initType.type == 9
-                                          ? Positioned(
-                                              top: 68,
-                                              right: 35,
-                                              child: Stack(
-                                                children: [
-                                                  InkWell(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          trapSpellShow = true;
-                                                        });
-                                                      },
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            '[spell card '
-                                                                .toUpperCase(),
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .black54,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          Image.asset(
-                                                              _makerStorage
-                                                                  .initTrapSpellType
-                                                                  .image,
-                                                              height: 22),
-                                                          Text(
-                                                            ']'.toUpperCase(),
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .black54,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                        ],
-                                                      )),
-                                                  buildListTrapSpellType(),
-                                                ],
-                                              ),
-                                            )
-                                          : _makerStorage.initType.type == 10
+                                          /// scaffold
+                                          IgnorePointer(
+                                            ignoring: true,
+                                            child: Image.asset(_makerStorage.initType.image),
+                                          ),
+                                          /// name
+                                          Positioned(
+                                              top: 30,
+                                              left: 30,
+                                              child: InkWell(
+                                                onTap: () => editInput(wtf.name),
+                                                child: Text(
+                                                  _makerStorage.name.toUpperCase(),
+                                                  style: TextStyle(
+                                                      color: _makerStorage
+                                                          .initType.type == 8
+                                                          ? Colors.white70
+                                                          : Colors.black87,
+                                                      fontFamily: 'Caps-1',
+                                                      fontSize: 19,
+                                                      fontWeight: FontWeight.bold),
+                                                ),
+                                              )),
+                                          /// level
+                                          _makerStorage.initType.type == 8
                                               ? Positioned(
-                                                  top: 68,
-                                                  right: 35,
-                                                  child: Stack(
-                                                    children: [
-                                                      InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              trapSpellShow =
-                                                                  true;
-                                                            });
-                                                          },
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                '[trap card '
-                                                                    .toUpperCase(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                              Image.asset(
-                                                                  _makerStorage
-                                                                      .initTrapSpellType
-                                                                      .image,
-                                                                  height: 22),
-                                                              Text(
-                                                                ']'.toUpperCase(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                      buildListTrapSpellType(),
-                                                    ],
-                                                  ),
-                                                )
-                                              : Positioned(
-                                                  top: 68,
-                                                  right: 35,
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    children: [
-                                                      InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            lvShow = true;
-                                                          });
-                                                        },
-                                                        child: SizedBox(
-                                                          height: 22,
-                                                          child: ListView.builder(
-                                                              reverse: true,
-                                                              shrinkWrap: true,
-                                                              scrollDirection:
-                                                                  Axis
-                                                                      .horizontal,
-                                                              itemCount:
-                                                                  _makerStorage
-                                                                      .initLv,
-                                                              itemBuilder: (context,
-                                                                      i) =>
-                                                                  Image.asset(
-                                                                      _makerStorage
-                                                                          .initImgLv)),
-                                                        ),
-                                                      ),
-                                                      buildListLevel(),
-                                                    ],
+                                            top: 58,
+                                            left: 35,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      lvShow = true;
+                                                    });
+                                                  },
+                                                  child: SizedBox(
+                                                    height: 18,
+                                                    child: ListView.builder(
+                                                        reverse: true,
+                                                        shrinkWrap: true,
+                                                        scrollDirection:
+                                                        Axis.horizontal,
+                                                        itemCount:
+                                                        _makerStorage
+                                                            .initLv,
+                                                        itemBuilder: (context,
+                                                            i) =>
+                                                            Image.asset(
+                                                                _makerStorage
+                                                                    .initRank)),
                                                   ),
                                                 ),
-                                  //Attribute
-                                  _makerStorage.initType.type == 9
-                                      ? Positioned(
-                                          top: 25,
-                                          right: 40,
-                                          child: Image.asset(
-                                            _makerStorage.attribute[7].image,
-                                            height: 35,
-                                          ))
-                                      : _makerStorage.initType.type == 10
-                                          ? Positioned(
-                                              top: 25,
-                                              right: 40,
-                                              child: Image.asset(
-                                                _makerStorage
-                                                    .attribute[8].image,
-                                                height: 35,
-                                              ))
-                                          : Positioned(
-                                              top: 25,
-                                              right: 40,
+                                                buildListLevel(),
+                                              ],
+                                            ),
+                                          )
+                                              : _makerStorage.initType.type == 9
+                                              ? Positioned(
+                                            top: 58,
+                                            right: 35,
+                                            child: Stack(
+                                              children: [
+                                                InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        trapSpellShow = true;
+                                                      });
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          '[ spell card '
+                                                              .toUpperCase(),
+                                                          style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontWeight: FontWeight.bold),
+                                                        ),
+                                                        Image.asset(
+                                                            _makerStorage
+                                                                .initTrapSpellType
+                                                                .image,
+                                                            height: 20),
+                                                        Text(
+                                                          ' ]'.toUpperCase(),
+                                                          style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontWeight: FontWeight.bold),
+                                                        ),
+                                                      ],
+                                                    )),
+                                                buildListTrapSpellType(),
+                                              ],
+                                            ),
+                                          )
+                                              : _makerStorage.initType.type == 10
+                                              ? Positioned(
+                                            top: 58,
+                                            right: 35,
+                                            child: Stack(
+                                              children: [
+                                                InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        trapSpellShow =
+                                                        true;
+                                                      });
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          '[ trap card '.toUpperCase(),
+                                                          style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontWeight: FontWeight.bold),
+                                                        ),
+                                                        Image.asset(
+                                                            _makerStorage
+                                                                .initTrapSpellType
+                                                                .image,
+                                                            height: 20),
+                                                        Text(
+                                                          ' ]'.toUpperCase(),
+                                                          style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontWeight: FontWeight.bold),
+                                                        ),
+                                                      ],
+                                                    )),
+                                                buildListTrapSpellType(),
+                                              ],
+                                            ),
+                                          )
+                                              : Positioned(
+                                            top: 58,
+                                            right: 35,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      lvShow = true;
+                                                    });
+                                                  },
+                                                  child: SizedBox(
+                                                    height: 18,
+                                                    child: ListView.builder(
+                                                        reverse: true,
+                                                        shrinkWrap: true,
+                                                        scrollDirection: Axis.horizontal,
+                                                        itemCount:
+                                                        _makerStorage.initLv,
+                                                        itemBuilder: (context, i) =>
+                                                            Image.asset(
+                                                                _makerStorage
+                                                                    .initImgLv)),
+                                                  ),
+                                                ),
+                                                buildListLevel(),
+                                              ],
+                                            ),
+                                          ),
+                                          /// attribute
+                                          _makerStorage.initType.type == 9
+                                              ? SizedBox()
+                                              : _makerStorage.initType.type == 10
+                                              ? SizedBox()
+                                              : Positioned(
+                                              top: 24,
+                                              right: 23,
                                               child: Stack(
                                                 children: [
                                                   InkWell(
@@ -1058,865 +1615,173 @@ class _MakerPageState extends State<MakerPage> {
                                                         });
                                                       },
                                                       child: Image.asset(
-                                                        _makerStorage
-                                                            .initAttr.image,
-                                                        height: 35,
+                                                        _makerStorage.initAttr.image,
+                                                        height: 28,
                                                       )),
                                                   buildListAttr(),
                                                 ],
                                               )),
-                                  //Name type
-                                  Positioned(
-                                      bottom: 90,
-                                      left: 40,
-                                      child: InkWell(
-                                        onTap: () => editInput(wtf.cardType),
-                                        child: Text(
-                                          '[${_makerStorage.nameType.toLowerCase()}]',
-                                          style: TextStyle(
-                                              color: Colors.black54,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      )),
-                                  //Card desc
-                                  Positioned(
-                                      bottom: 70,
-                                      left: 40,
-                                      child: InkWell(
-                                        onTap: () => editInput(wtf.desc),
-                                        child: Text(
-                                          _makerStorage.decs,
-                                          style: TextStyle(
-                                              color: Colors.black54,
-                                              fontWeight: FontWeight.w400),
-                                        ),
-                                      )),
-                                  //Divider
-                                  Positioned(
-                                      bottom: 40,
-                                      left: 28,
-                                      child: Container(
-                                        width: width * 0.8,
-                                        child: Divider(
-                                          color: Colors.black,
-                                        ),
-                                      )),
-                                  //ATK/DEF
-                                  Positioned(
-                                    bottom: 25,
-                                    right: 35,
-                                    child: Row(
-                                      children: [
-                                        InkWell(
-                                          onTap: () => editInput(wtf.atk),
-                                          child: Text(
-                                            'ATK/${_makerStorage.atk}'
-                                                .toUpperCase(),
-                                            style: TextStyle(
-                                                color: Colors.black54,
-                                                fontWeight: FontWeight.bold),
+                                          /// card name/desc
+                                          Positioned(
+                                              bottom: 90,
+                                              left: 40,
+                                              child: InkWell(
+                                                onTap: () => editInput(wtf.cardType),
+                                                child: Text(
+                                                  '[ ${_makerStorage.nameType.toLowerCase()} ]',
+                                                  style: TextStyle(
+                                                      fontFamily: 'Caps-1',
+                                                      fontSize: 19,
+                                                      fontWeight: FontWeight.bold),
+                                                ),
+                                              )),
+                                          Positioned(
+                                              bottom: 70,
+                                              left: 40,
+                                              child: InkWell(
+                                                onTap: () => editInput(wtf.desc),
+                                                child: Text(
+                                                  _makerStorage.decs,
+                                                  style: TextStyle(
+                                                      fontFamily: 'Caps-1',
+                                                      fontSize: 17,
+                                                      fontWeight: FontWeight.bold),
+                                                ),
+                                              )),
+                                          /// atk/def
+                                          Positioned(
+                                            bottom: 25,
+                                            right: 90,
+                                            child: InkWell(
+                                              onTap: () => editInput(wtf.atk),
+                                              child: Text('${_makerStorage.atk}',
+                                                style: TextStyle(
+                                                    fontSize: 17,
+                                                    fontFamily: 'Caps-1',
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        InkWell(
-                                          onTap: () => editInput(wtf.def),
-                                          child: Text(
-                                            'DEF/${_makerStorage.def}'
-                                                .toUpperCase(),
-                                            style: TextStyle(
-                                                color: Colors.black54,
-                                                fontWeight: FontWeight.bold),
+                                          Positioned(
+                                            bottom: 25,
+                                            right: 25,
+                                            child: InkWell(
+                                              onTap: () => editInput(wtf.atk),
+                                              child: Text(
+                                                '${_makerStorage.def}',
+                                                style: TextStyle(
+                                                    fontSize: 17,
+                                                    fontFamily: 'Caps-1',
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  //Year
-                                  Positioned(
-                                    bottom: 6,
-                                    right: 35,
-                                    child: InkWell(
-                                      onTap: () => editInput(wtf.year),
-                                      child: Text(
-                                        '@${_makerStorage.year}',
-                                        style: TextStyle(
-                                            color:
-                                                _makerStorage.initType.type == 8
-                                                    ? Colors.white70
-                                                    : Colors.black,
-                                            fontWeight: FontWeight.bold),
+                                          /// num/year
+                                          Positioned(
+                                            bottom: 6,
+                                            right: 25,
+                                            child: InkWell(
+                                              onTap: () => editInput(wtf.year),
+                                              child: Text(
+                                                '${_makerStorage.year}',
+                                                style: TextStyle(
+                                                    color: _makerStorage
+                                                        .initType.type == 8
+                                                        ? Colors.white70
+                                                        : Colors.black,
+                                                    fontSize: 18,
+                                                    fontFamily: 'Caps-1',
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            bottom: 6,
+                                            left: 25,
+                                            child: InkWell(
+                                              onTap: () => _randomNumber(),
+                                              child: Text(
+                                                '${_makerStorage.number}',
+                                                style: TextStyle(
+                                                    color: _makerStorage
+                                                        .initType.type == 8
+                                                        ? Colors.white70
+                                                        : Colors.black,
+                                                    fontSize: 18,
+                                                    fontFamily: 'Caps-1',
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                  //Serial number
-                                  Positioned(
-                                    bottom: 6,
-                                    left: 35,
-                                    child: InkWell(
-                                      onTap: () => _randomNumber(),
-                                      child: Text(
-                                        '${_makerStorage.number}',
-                                        style: TextStyle(
-                                            color:
-                                                _makerStorage.initType.type == 8
-                                                    ? Colors.white70
-                                                    : Colors.black,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
                             ),
+          /// btn save
+          Container(
+            height: 50,
+            width: 100,
+            decoration: BoxDecoration(
+              color: AppColors.dropdownButton.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(40),
+              border: Border.all(
+                  color: Colors.black, style: BorderStyle.solid, width: 2.2),
+            ),
+            child: TextButton(
+                onPressed: () => imagePath.isNotEmpty ? _save() : {},
+                child: Text("Save",
+                    style: TextStyle(fontFamily: 'Caps-1', fontSize: 24,
+                        fontWeight: FontWeight.w600, color: imagePath.isNotEmpty ? Colors.black : Colors.black38)),
+            ),
+          ),
+          /// theme select
+          mode == 1 ? SizedBox()
+          : mode == 2 ? SizedBox()
+          : Container(
+            color: Colors.white.withOpacity(0.4),
+            height: isLargerScreen ? height * 0.150 : height * 0.140,
+            width: double.infinity,
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _makerStorage.cardType.length,
+                itemBuilder: (context, index) {
+                  final item = _makerStorage.cardType[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          _makerStorage.initType = item;
+                        });
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 60,
+                                color: Colors.white,
+                              ),
+                              Image.asset(item.image, width: isLargerScreen ? 60 : 35),
+                            ],
                           ),
-                        )
-                      : widget.mode == 4
-                          ? Center(
-                              child: Screenshot(
-                                controller: screenController,
-                                child: SizedBox(
-                                  child: Stack(
-                                    children: [
-                                      //Scaffold
-                                      Image.asset(_makerStorage.initType.image),
-                                      //Image
-                                      Positioned(
-                                        left: 42,
-                                        bottom: 141,
-                                        child: InkWell(
-                                          onTap: () => _getImage(0),
-                                          child: SizedBox(
-                                            height: 249,
-                                            width: 249,
-                                            child: imagePath.isEmpty
-                                                ? Center(
-                                                    child: Text(
-                                                        'Tap here to select image'))
-                                                : Image.file(
-                                                    File(imagePath),
-                                                    width: 249,
-                                                    height: 249,
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                          ),
-                                        ),
-                                      ),
-                                      //name
-                                      Positioned(
-                                          top: 35,
-                                          left: 40,
-                                          child: InkWell(
-                                            onTap: () => editInput(wtf.name),
-                                            child: Text(
-                                              _makerStorage.name.toUpperCase(),
-                                              style: TextStyle(
-                                                  color: _makerStorage
-                                                              .initType.type ==
-                                                          8
-                                                      ? Colors.white70
-                                                      : Colors.black54,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          )),
-                                      //Level
-                                      _makerStorage.initType.type == 8
-                                          ? Positioned(
-                                              top: 68,
-                                              left: 35,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        lvShow = true;
-                                                      });
-                                                    },
-                                                    child: SizedBox(
-                                                      height: 22,
-                                                      child: ListView.builder(
-                                                          reverse: true,
-                                                          shrinkWrap: true,
-                                                          scrollDirection:
-                                                              Axis.horizontal,
-                                                          itemCount:
-                                                              _makerStorage
-                                                                  .initLv,
-                                                          itemBuilder: (context,
-                                                                  i) =>
-                                                              Image.asset(
-                                                                  _makerStorage
-                                                                      .initRank)),
-                                                    ),
-                                                  ),
-                                                  buildListLevel(),
-                                                ],
-                                              ),
-                                            )
-                                          : _makerStorage.initType.type == 9
-                                              ? Positioned(
-                                                  top: 68,
-                                                  right: 35,
-                                                  child: Stack(
-                                                    children: [
-                                                      InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              trapSpellShow =
-                                                                  true;
-                                                            });
-                                                          },
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                '[spell card '
-                                                                    .toUpperCase(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                              Image.asset(
-                                                                  _makerStorage
-                                                                      .initTrapSpellType
-                                                                      .image,
-                                                                  height: 22),
-                                                              Text(
-                                                                ']'.toUpperCase(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                      buildListTrapSpellType(),
-                                                    ],
-                                                  ),
-                                                )
-                                              : _makerStorage.initType.type ==
-                                                      10
-                                                  ? Positioned(
-                                                      top: 68,
-                                                      right: 35,
-                                                      child: Stack(
-                                                        children: [
-                                                          InkWell(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  trapSpellShow =
-                                                                      true;
-                                                                });
-                                                              },
-                                                              child: Row(
-                                                                children: [
-                                                                  Text(
-                                                                    '[trap card '
-                                                                        .toUpperCase(),
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .black54,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                  Image.asset(
-                                                                      _makerStorage
-                                                                          .initTrapSpellType
-                                                                          .image,
-                                                                      height:
-                                                                          22),
-                                                                  Text(
-                                                                    ']'.toUpperCase(),
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .black54,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                ],
-                                                              )),
-                                                          buildListTrapSpellType(),
-                                                        ],
-                                                      ),
-                                                    )
-                                                  : Positioned(
-                                                      top: 68,
-                                                      right: 35,
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          InkWell(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                lvShow = true;
-                                                              });
-                                                            },
-                                                            child: SizedBox(
-                                                              height: 22,
-                                                              child: ListView.builder(
-                                                                  reverse: true,
-                                                                  shrinkWrap:
-                                                                      true,
-                                                                  scrollDirection: Axis
-                                                                      .horizontal,
-                                                                  itemCount:
-                                                                      _makerStorage
-                                                                          .initLv,
-                                                                  itemBuilder: (context,
-                                                                          i) =>
-                                                                      Image.asset(
-                                                                          _makerStorage
-                                                                              .initImgLv)),
-                                                            ),
-                                                          ),
-                                                          buildListLevel(),
-                                                        ],
-                                                      ),
-                                                    ),
-                                      //Attribute
-                                      _makerStorage.initType.type == 9
-                                          ? Positioned(
-                                              top: 25,
-                                              right: 40,
-                                              child: Image.asset(
-                                                _makerStorage
-                                                    .attribute[7].image,
-                                                height: 35,
-                                              ))
-                                          : _makerStorage.initType.type == 10
-                                              ? Positioned(
-                                                  top: 25,
-                                                  right: 40,
-                                                  child: Image.asset(
-                                                    _makerStorage
-                                                        .attribute[8].image,
-                                                    height: 35,
-                                                  ))
-                                              : Positioned(
-                                                  top: 25,
-                                                  right: 40,
-                                                  child: Stack(
-                                                    children: [
-                                                      InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              attrShow = true;
-                                                            });
-                                                          },
-                                                          child: Image.asset(
-                                                            _makerStorage
-                                                                .initAttr.image,
-                                                            height: 35,
-                                                          )),
-                                                      buildListAttr(),
-                                                    ],
-                                                  )),
-                                      //Name type
-                                      Positioned(
-                                          bottom: 90,
-                                          left: 40,
-                                          child: InkWell(
-                                            onTap: () =>
-                                                editInput(wtf.cardType),
-                                            child: Text(
-                                              '[${_makerStorage.nameType.toLowerCase()}]',
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          )),
-                                      //Card desc
-                                      Positioned(
-                                          bottom: 70,
-                                          left: 40,
-                                          child: InkWell(
-                                            onTap: () => editInput(wtf.desc),
-                                            child: Text(
-                                              _makerStorage.decs,
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          )),
-                                      //Divider
-                                      Positioned(
-                                          bottom: 40,
-                                          left: 28,
-                                          child: Container(
-                                            width: width * 0.8,
-                                            child: Divider(
-                                              color: Colors.black,
-                                            ),
-                                          )),
-                                      //ATK/DEF
-                                      Positioned(
-                                        bottom: 25,
-                                        right: 35,
-                                        child: Row(
-                                          children: [
-                                            InkWell(
-                                              onTap: () => editInput(wtf.atk),
-                                              child: Text(
-                                                'ATK/${_makerStorage.atk}'
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                    color: Colors.black54,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                            InkWell(
-                                              onTap: () => editInput(wtf.def),
-                                              child: Text(
-                                                'DEF/${_makerStorage.def}'
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                    color: Colors.black54,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      //Year
-                                      Positioned(
-                                        bottom: 6,
-                                        right: 35,
-                                        child: InkWell(
-                                          onTap: () => editInput(wtf.year),
-                                          child: Text(
-                                            '@${_makerStorage.year}',
-                                            style: TextStyle(
-                                                color: _makerStorage
-                                                            .initType.type ==
-                                                        8
-                                                    ? Colors.white70
-                                                    : Colors.black,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                      //Serial number
-                                      Positioned(
-                                        bottom: 6,
-                                        left: 35,
-                                        child: InkWell(
-                                          onTap: () => _randomNumber(),
-                                          child: Text(
-                                            '${_makerStorage.number}',
-                                            style: TextStyle(
-                                                color: _makerStorage
-                                                            .initType.type ==
-                                                        8
-                                                    ? Colors.white70
-                                                    : Colors.black,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Center(
-                              child: Screenshot(
-                                controller: screenController,
-                                child: SizedBox(
-                                  child: Stack(
-                                    children: [
-                                      //Scaffold
-                                      Image.asset(_makerStorage.initType.image),
-                                      //Image
-                                      Positioned(
-                                        left: 42,
-                                        bottom: 141,
-                                        child: InkWell(
-                                          onTap: () => _getImage(0),
-                                          child: SizedBox(
-                                            height: 249,
-                                            width: 249,
-                                            child: imagePath.isEmpty
-                                                ? Center(
-                                                    child: Text(
-                                                        'Tap here to select image'))
-                                                : Image.file(
-                                                    File(imagePath),
-                                                    width: 249,
-                                                    height: 249,
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                          ),
-                                        ),
-                                      ),
-                                      //name
-                                      Positioned(
-                                          top: 35,
-                                          left: 40,
-                                          child: InkWell(
-                                            onTap: () => editInput(wtf.name),
-                                            child: Text(
-                                              _makerStorage.name.toUpperCase(),
-                                              style: TextStyle(
-                                                  color: _makerStorage
-                                                              .initType.type ==
-                                                          8
-                                                      ? Colors.white70
-                                                      : Colors.black54,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          )),
-                                      //Level
-                                      _makerStorage.initType.type == 8
-                                          ? Positioned(
-                                              top: 68,
-                                              left: 35,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        lvShow = true;
-                                                      });
-                                                    },
-                                                    child: SizedBox(
-                                                      height: 22,
-                                                      child: ListView.builder(
-                                                          reverse: true,
-                                                          shrinkWrap: true,
-                                                          scrollDirection:
-                                                              Axis.horizontal,
-                                                          itemCount:
-                                                              _makerStorage
-                                                                  .initLv,
-                                                          itemBuilder: (context,
-                                                                  i) =>
-                                                              Image.asset(
-                                                                  _makerStorage
-                                                                      .initRank)),
-                                                    ),
-                                                  ),
-                                                  buildListLevel(),
-                                                ],
-                                              ),
-                                            )
-                                          : _makerStorage.initType.type == 9
-                                              ? Positioned(
-                                                  top: 68,
-                                                  right: 35,
-                                                  child: Stack(
-                                                    children: [
-                                                      InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              trapSpellShow =
-                                                                  true;
-                                                            });
-                                                          },
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                '[spell card '
-                                                                    .toUpperCase(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                              Image.asset(
-                                                                  _makerStorage
-                                                                      .initTrapSpellType
-                                                                      .image,
-                                                                  height: 22),
-                                                              Text(
-                                                                ']'.toUpperCase(),
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                      buildListTrapSpellType(),
-                                                    ],
-                                                  ),
-                                                )
-                                              : _makerStorage.initType.type ==
-                                                      10
-                                                  ? Positioned(
-                                                      top: 68,
-                                                      right: 35,
-                                                      child: Stack(
-                                                        children: [
-                                                          InkWell(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  trapSpellShow =
-                                                                      true;
-                                                                });
-                                                              },
-                                                              child: Row(
-                                                                children: [
-                                                                  Text(
-                                                                    '[trap card '
-                                                                        .toUpperCase(),
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .black54,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                  Image.asset(
-                                                                      _makerStorage
-                                                                          .initTrapSpellType
-                                                                          .image,
-                                                                      height:
-                                                                          22),
-                                                                  Text(
-                                                                    ']'.toUpperCase(),
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .black54,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                ],
-                                                              )),
-                                                          buildListTrapSpellType(),
-                                                        ],
-                                                      ),
-                                                    )
-                                                  : Positioned(
-                                                      top: 68,
-                                                      right: 35,
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          InkWell(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                lvShow = true;
-                                                              });
-                                                            },
-                                                            child: SizedBox(
-                                                              height: 22,
-                                                              child: ListView.builder(
-                                                                  reverse: true,
-                                                                  shrinkWrap:
-                                                                      true,
-                                                                  scrollDirection: Axis
-                                                                      .horizontal,
-                                                                  itemCount:
-                                                                      _makerStorage
-                                                                          .initLv,
-                                                                  itemBuilder: (context,
-                                                                          i) =>
-                                                                      Image.asset(
-                                                                          _makerStorage
-                                                                              .initImgLv)),
-                                                            ),
-                                                          ),
-                                                          buildListLevel(),
-                                                        ],
-                                                      ),
-                                                    ),
-                                      //Attribute
-                                      _makerStorage.initType.type == 9
-                                          ? Positioned(
-                                              top: 25,
-                                              right: 40,
-                                              child: Image.asset(
-                                                _makerStorage
-                                                    .attribute[7].image,
-                                                height: 35,
-                                              ))
-                                          : _makerStorage.initType.type == 10
-                                              ? Positioned(
-                                                  top: 25,
-                                                  right: 40,
-                                                  child: Image.asset(
-                                                    _makerStorage
-                                                        .attribute[8].image,
-                                                    height: 35,
-                                                  ))
-                                              : Positioned(
-                                                  top: 25,
-                                                  right: 40,
-                                                  child: Stack(
-                                                    children: [
-                                                      InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              attrShow = true;
-                                                            });
-                                                          },
-                                                          child: Image.asset(
-                                                            _makerStorage
-                                                                .initAttr.image,
-                                                            height: 35,
-                                                          )),
-                                                      buildListAttr(),
-                                                    ],
-                                                  )),
-                                      //Name type
-                                      Positioned(
-                                          bottom: 90,
-                                          left: 40,
-                                          child: InkWell(
-                                            onTap: () =>
-                                                editInput(wtf.cardType),
-                                            child: Text(
-                                              '[${_makerStorage.nameType.toLowerCase()}]',
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          )),
-                                      //Card desc
-                                      Positioned(
-                                          bottom: 70,
-                                          left: 40,
-                                          child: InkWell(
-                                            onTap: () => editInput(wtf.desc),
-                                            child: Text(
-                                              _makerStorage.decs,
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          )),
-                                      //Divider
-                                      Positioned(
-                                          bottom: 40,
-                                          left: 28,
-                                          child: Container(
-                                            width: width * 0.8,
-                                            child: Divider(
-                                              color: Colors.black,
-                                            ),
-                                          )),
-                                      //ATK/DEF
-                                      Positioned(
-                                        bottom: 25,
-                                        right: 35,
-                                        child: Row(
-                                          children: [
-                                            InkWell(
-                                              onTap: () => editInput(wtf.atk),
-                                              child: Text(
-                                                'ATK/${_makerStorage.atk}'
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                    color: Colors.black54,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                            InkWell(
-                                              onTap: () => editInput(wtf.def),
-                                              child: Text(
-                                                'DEF/${_makerStorage.def}'
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                    color: Colors.black54,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      //Year
-                                      Positioned(
-                                        bottom: 6,
-                                        right: 35,
-                                        child: InkWell(
-                                          onTap: () => editInput(wtf.year),
-                                          child: Text(
-                                            '@${_makerStorage.year}',
-                                            style: TextStyle(
-                                                color: _makerStorage
-                                                            .initType.type ==
-                                                        8
-                                                    ? Colors.white70
-                                                    : Colors.black,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                      //Serial number
-                                      Positioned(
-                                        bottom: 6,
-                                        left: 35,
-                                        child: InkWell(
-                                          onTap: () => _randomNumber(),
-                                          child: Text(
-                                            '${_makerStorage.number}',
-                                            style: TextStyle(
-                                                color: _makerStorage
-                                                            .initType.type ==
-                                                        8
-                                                    ? Colors.white70
-                                                    : Colors.black,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-          widget.mode == 4
-              ? Column(
-                  children: [
-                    SizedBox(
-                      height: height * 0.0300,
-                      child: Text(
-                        'Your input degree here',
-                        style: TextStyle(fontSize: 18),
+                          Text(item.name,
+                            style: TextStyle(
+                                fontFamily: 'Caps-1',
+                                fontSize: isLargerScreen ? 20 : 14),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      height: height * 0.125,
-                      child: InkWell(
-                        onTap: () => editInput(wtf.degree),
-                        child: Text(
-                          '$degree °',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    )
-                  ],
-                )
-              : SizedBox(
-                  height: height * 0.1,
-                )
+                  );
+                }),
+          )
         ],
       ),
     );
