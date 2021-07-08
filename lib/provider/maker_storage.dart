@@ -12,13 +12,9 @@ class MakerStorage {
   int initLv = 1;
   int number = 0;
 
-  var initAttr =
-      Attribute(name: 'Light', image: 'assets/images/attribute/Light.png');
-  var initType =
-      CardType(type: 1, name: 'Normal', image: 'assets/images/theme/1.png');
-  var initTrapSpellType = TrapSpellType(
-      name: 'Continuous',
-      image: 'assets/images/trap_spell_type/Continuous.png');
+  var initAttr = Attribute(name: 'Light', image: 'assets/images/attribute/Light.png');
+  var initType = CardType(type: 1, name: 'Normal', image: 'assets/images/theme/1.png');
+  var initTrapSpellType = TrapSpellType(name: 'Continuous', image: 'assets/images/trap_spell_type/Continuous.png');
 
   final cardType = <CardType>[
     CardType(type: 1, name: 'Normal', image: 'assets/images/theme/1.png'),
@@ -45,20 +41,12 @@ class MakerStorage {
   ];
 
   final trapSpellType = <TrapSpellType>[
-    TrapSpellType(
-        name: 'Continuous',
-        image: 'assets/images/trap_spell_type/Continuous.png'),
-    TrapSpellType(
-        name: 'Counter', image: 'assets/images/trap_spell_type/Counter.png'),
-    TrapSpellType(
-        name: 'Equip', image: 'assets/images/trap_spell_type/Equip.png'),
-    TrapSpellType(
-        name: 'Field', image: 'assets/images/trap_spell_type/Field.png'),
-    TrapSpellType(
-        name: 'Quick-Play',
-        image: 'assets/images/trap_spell_type/Quick-Play.png'),
-    TrapSpellType(
-        name: 'Ritual', image: 'assets/images/trap_spell_type/Ritual.png'),
+    TrapSpellType(name: 'Continuous', image: 'assets/images/trap_spell_type/Continuous.png'),
+    TrapSpellType(name: 'Counter', image: 'assets/images/trap_spell_type/Counter.png'),
+    TrapSpellType(name: 'Equip', image: 'assets/images/trap_spell_type/Equip.png'),
+    TrapSpellType(name: 'Field', image: 'assets/images/trap_spell_type/Field.png'),
+    TrapSpellType(name: 'Quick-Play', image: 'assets/images/trap_spell_type/Quick-Play.png'),
+    TrapSpellType(name: 'Ritual', image: 'assets/images/trap_spell_type/Ritual.png'),
   ];
 
   final levels = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
