@@ -15,6 +15,8 @@ class MakerPage extends StatefulWidget {
 
 class _MakerPageState extends State<MakerPage> {
   late double height, width;
+  late Timer timer;
+
   String degree = '0';
   int fileName = DateTime.now().millisecondsSinceEpoch;
 
@@ -77,10 +79,33 @@ class _MakerPageState extends State<MakerPage> {
           year: _makerStorage.year,
           atk: _makerStorage.atk,
           def: _makerStorage.def));
-      final snackBar = SnackBar(
-        content: Text('Yay! Successfully!'),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      showDialog(
+          context: context,
+          builder: (BuildContext builderContext) {
+            timer = Timer(Duration(milliseconds: 800), () {
+              Navigator.of(context).pop();
+            });
+
+            return Dialog(
+              backgroundColor: Colors.transparent,
+             child: SizedBox.expand(
+               child: Container(
+                 child: Column(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                   children: [
+                     Icon(Icons.check_sharp, size: 35, color: Colors.greenAccent,),
+                     Text('saved'.toUpperCase(), style: TextStyle(fontSize: 35, fontFamily: 'Caps-1', fontWeight: FontWeight.bold),),
+                   ],
+                 ),
+               ),
+             ),
+            );
+          }
+      ).then((val){
+        if (timer.isActive) {
+          timer.cancel();
+        }
+      });
     }
   }
 
@@ -119,7 +144,7 @@ class _MakerPageState extends State<MakerPage> {
 
   void _toPreview() {
     screenController.capture().then((image) async {
-      widget.cards.add(YugiohCard(image!, int.parse(degree)));
+      widget.cards.add(YugiohCard(image!, double.parse(degree)));
       final result = await Navigator.push(
           context,
           MaterialPageRoute(
@@ -133,7 +158,7 @@ class _MakerPageState extends State<MakerPage> {
 
   void _toNextPage() {
     screenController.capture().then((image) {
-      widget.cards.add(YugiohCard(image!, int.parse(degree)));
+      widget.cards.add(YugiohCard(image!, double.parse(degree)));
       Navigator.push(
           context,
           MaterialPageRoute(

@@ -13,6 +13,7 @@ class PreviewPage extends StatefulWidget {
 
 class _PreviewPageState extends State<PreviewPage> {
   final screenController = ScreenshotController();
+
   late double height, width;
   Uint8List? image;
   String imgLink = '';
@@ -20,6 +21,7 @@ class _PreviewPageState extends State<PreviewPage> {
   bool isUploadDone = false;
   bool isVisible = false;
   bool isDone = true;
+  dynamic focus;
 
   void _upload() async {
     if (widget.mode == 1) {
@@ -206,8 +208,7 @@ class _PreviewPageState extends State<PreviewPage> {
                     ? Screenshot(
                   controller: screenController,
                   child: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: items
                         .map((e) => Draggable(
                       data: e,
@@ -216,61 +217,120 @@ class _PreviewPageState extends State<PreviewPage> {
                       ),
                       feedback: Stack(
                         children: [
-                          Image.memory(
-                            e.image,
-                            width: width * 0.25,
-                          ),
-                          Image.memory(e.image,
-                              width: width * 0.25,
-                              color: Colors.red
-                                  .withOpacity(0.5)),
+                          Image.memory(e.image, width: e.width - 50),
+                          Image.memory(e.image, width: e.width - 50, color: Colors.red.withOpacity(0.5)),
                         ],
                       ),
-                      child: Image.memory(e.image,
-                          width: width * 0.3),
-                    ))
-                        .toList(),
+                      child: Image.memory(e.image, width: width * 0.3),
+                    )).toList(),
                   ),
                 )
                     : Screenshot(
-                  controller: screenController,
-                  child: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.center,
-                    children: items
-                        .map((e) => Draggable(
-                      data: e,
-                      childWhenDragging: SizedBox(
-                        width: width * 0.4,
+                      controller: screenController,
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 400,
+                        width: double.infinity,
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: items.length,
+                            itemBuilder: (ctx, i) {
+                              final item = items[i];
+                              return Draggable(
+                                data: item,
+                                childWhenDragging: Align(
+                                    widthFactor: 0.5,
+                                    child: SizedBox(width: item.width)),
+                                feedback: Stack(
+                                  children: [
+                                    Image.memory(item.image, width: item.width - 50),
+                                    Image.memory(item.image, width: item.width - 50, color: Colors.red.withOpacity(0.5)),
+                                  ],
+                                ),
+                                child: Align(
+                                  widthFactor: 0.5,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        focus = i;
+                                      });
+                                      Future<void> onBottomSheetClose =
+                                      showModalBottomSheet<void>(
+                                          barrierColor: Colors.transparent,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return StatefulBuilder(
+                                                builder: (BuildContext context, StateSetter fuckingState) =>
+                                                    Container(
+                                                      height: 150,
+                                                      child: Center(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: <Widget>[
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                CupertinoSlider(
+                                                                    value: item.degree,
+                                                                    min: -360,
+                                                                    max: 360,
+                                                                    onChanged: (double value) {
+                                                                      setState(() {
+                                                                        item.degree = value;
+                                                                      });
+                                                                      fuckingState(() => item.degree = value);
+                                                                      if (value == 0) HapticFeedback.lightImpact();
+                                                                    }),
+                                                                Text('${item.degree.round()}°', style: TextStyle(fontFamily: 'Caps-1', fontSize: 25),)
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                CupertinoSlider(
+                                                                    value: item.width,
+                                                                    min: 80,
+                                                                    max: 180,
+                                                                    onChanged: (double value) {
+                                                                      setState(() {
+                                                                        item.width = value;
+                                                                      });
+                                                                      fuckingState(() => item.width = value);
+                                                                    }),
+                                                                Text('${item.width.round()} px', style: TextStyle(fontFamily: 'Caps-1', fontSize: 25),)
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ));
+                                          });
+                                      onBottomSheetClose.then((value) {
+                                        setState(() {
+                                          focus = null;
+                                        });
+                                      });
+                                    },
+                                    child: RotationTransition(
+                                      turns: AlwaysStoppedAnimation(item.degree / 360),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 4,
+                                                color: focus == i
+                                                    ? Colors.yellow
+                                                    : Colors.transparent)),
+                                        child: Image.memory(item.image, width: item.width),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
                       ),
-                      feedback: Stack(
-                        children: [
-                          Image.memory(
-                            e.image,
-                            width: width * 0.35,
-                          ),
-                          Image.memory(e.image,
-                              width: width * 0.35,
-                              color: Colors.red
-                                  .withOpacity(0.5)),
-                        ],
-                      ),
-                      child: Align(
-                        widthFactor: 0.5,
-                        child: RotationTransition(
-                          turns:
-                          AlwaysStoppedAnimation(
-                              e.degree / 360),
-                          child: Image.memory(
-                            e.image,
-                            width: width * 0.4,
-                          ),
-                        ),
-                      ),
-                    ))
-                        .toList(),
-                  ),
-                ),
+                    ),
                 /// upload icon
                 SizedBox(
                   height: height * 0.010,
@@ -300,52 +360,50 @@ class _PreviewPageState extends State<PreviewPage> {
                   visible: isVisible,
                   child: CircularProgressIndicator(),
                 ),
-                /// bin target
-                mode == 3
-                    ? Container(
-                  alignment: Alignment.center,
-                  height: height * 0.2,
-                  child: DragTarget(
-                    onWillAccept: (YugiohCard? data) {
-                      return true;
-                    },
-                    onAccept: (YugiohCard data) {
-                      setState(() {
-                        items.removeWhere((item) => item == data);
-                      });
-                    },
-                    builder: (BuildContext context, List<YugiohCard?> candidateData,
-                        List<dynamic> rejectedData) {
-                      return Icon(Icons.delete, size: 35);
-                    },
-                  ),
-                )
-                    : mode == 4
-                    ? Container(
-                  alignment: Alignment.center,
-                  height: height * 0.2,
-                  child: DragTarget(
-                    onWillAccept: (YugiohCard? data) {
-                      return true;
-                    },
-                    onAccept: (YugiohCard data) {
-                      setState(() {
-                        items.removeWhere((item) => item == data);
-                      });
-                    },
-                    builder: (BuildContext context,
-                        List<YugiohCard?> candidateData,
-                        List<dynamic> rejectedData) {
-                      return Icon(Icons.delete, size: 35);
-                    },
-                  ),
-                )
-                    : SizedBox()
               ],
             )
                 : Center(
-              child: Text('Empty!'),
+              child: Text('Empty!', style: TextStyle(fontFamily: 'Caps-1', fontSize: 35),),
             ),
+            floatingActionButton: mode == 3
+            ? Container(
+              height: 80,
+              width: 80,
+              child: DragTarget(
+                onWillAccept: (YugiohCard? data) {
+                  HapticFeedback.lightImpact();
+                  return true;
+                },
+                onAccept: (YugiohCard data) {
+                  setState(() {
+                    items.removeWhere((item) => item == data);
+                  });
+                },
+                builder: (BuildContext context, List<YugiohCard?> candidateData,
+                    List<dynamic> rejectedData) {
+                  return Icon(Icons.delete, size: 40);
+                },
+              ),
+            ) : mode == 4
+            ? Container(
+              height: 80,
+              width: 80,
+              child: DragTarget(
+                onWillAccept: (YugiohCard? data) {
+                  HapticFeedback.lightImpact();
+                  return true;
+                },
+                onAccept: (YugiohCard data) {
+                  setState(() {
+                    items.removeWhere((item) => item == data);
+                  });
+                },
+                builder: (BuildContext context, List<YugiohCard?> candidateData,
+                    List<dynamic> rejectedData) {
+                  return Icon(Icons.delete, size: 40);
+                },
+              ),
+            ) : SizedBox(),
           )
         ],
       ),

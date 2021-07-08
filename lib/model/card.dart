@@ -2,7 +2,8 @@ part of 'model.dart';
 
 class YugiohCard {
   Uint8List image;
-  int degree;
+  double degree;
+  double width = 150;
 
   YugiohCard(this.image, this.degree);
 }
