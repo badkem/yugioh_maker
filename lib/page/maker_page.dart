@@ -93,8 +93,8 @@ class _MakerPageState extends State<MakerPage> {
                  child: Column(
                    mainAxisAlignment: MainAxisAlignment.center,
                    children: [
-                     Icon(Icons.check_sharp, size: 35, color: Colors.greenAccent,),
-                     Text('saved'.toUpperCase(), style: TextStyle(fontSize: 35, fontFamily: 'Caps-1', fontWeight: FontWeight.bold),),
+                     Icon(Icons.check_sharp, size: 35, color: Colors.green,),
+                     Text('saved'.toUpperCase(), style: TextStyle(color: Colors.white, fontSize: 35, fontFamily: 'Caps-1', fontWeight: FontWeight.bold),),
                    ],
                  ),
                ),
