@@ -28,6 +28,9 @@ class SelectMode extends StatefulWidget {
 }
 
 class _SelectModeState extends State<SelectMode> {
+  late double height, width;
+  bool isLargerScreen = false;
+
   List<Mode> _dropdownItems = [
     Mode(0, 'Normal'),
     Mode(1, 'Exodia'),
@@ -60,77 +63,171 @@ class _SelectModeState extends State<SelectMode> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Image.asset('assets/images/background.png', fit: BoxFit.cover,),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SafeArea(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Image.asset('assets/images/yuji.png', fit: BoxFit.contain,),
-                  Text('Card Maker', style: TextStyle(fontFamily: 'Caps-1', fontSize: 55),),
-                  Text('Select mode', style: TextStyle(fontFamily: 'Caps-1', fontSize: 30),),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                          color: AppColors.dropdownButton.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.black, style: BorderStyle.solid, width: 2.2),
-                      ),
-                    child: DropdownButton<Mode>(
-                      icon: Icon(Icons.arrow_drop_down, color: Colors.black, size: 30,),
-                      dropdownColor: AppColors.dropdownButton,
-                      value: _selectedItem,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedItem = value;
-                        });
-                      },
-                      items: _dropdownMenuItems,
-                    ),
+    height = MediaQuery.of(context).size.height;
+    width = MediaQuery.of(context).size.width;
+    return OrientationBuilder(builder: (ctx, orientation) {
+      if (width > 400) {
+        isLargerScreen = true;
+      } else {
+        isLargerScreen = false;
+      }
+      return isLargerScreen ? _buildMediumLayout() : _buildSmallLayout();
+    });
+  }
+
+  _buildMediumLayout() {
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage('assets/images/background.png')
+          )
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Image.asset('assets/images/yuji.png', fit: BoxFit.contain,),
+                Text('Card Maker', style: TextStyle(fontFamily: 'Caps-1', fontSize: 55),),
+                Text('Select mode', style: TextStyle(fontFamily: 'Caps-1', fontSize: 30),),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.dropdownButton.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                        color: Colors.black, style: BorderStyle.solid, width: 2.2),
                   ),
-                  SizedBox(height: 10,),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: AppColors.dropdownButton.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: Colors.black, style: BorderStyle.solid, width: 2.2),
-                    ),
-                    child: TextButton(
-                        onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (ctx) => MakerPage(
-                                mode: _selectedItem!.mode, cards: [],)));
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("Let's Go",
-                                style: TextStyle(fontFamily: 'Caps-1', fontSize: 25, fontWeight: FontWeight.w600, color: Colors.black)),
-                            SizedBox(width: 30,),
-                            Icon(Icons.arrow_forward, color: Colors.black, size: 25,),
-                          ],
-                        )
-                    ),
+                  child: DropdownButton<Mode>(
+                    icon: Icon(Icons.arrow_drop_down, color: Colors.black, size: 30,),
+                    dropdownColor: Colors.white,
+                    value: _selectedItem,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedItem = value;
+                      });
+                    },
+                    items: _dropdownMenuItems,
                   ),
-                  TextButton(
+                ),
+                SizedBox(height: 10,),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.dropdownButton.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                        color: Colors.black, style: BorderStyle.solid, width: 2.2),
+                  ),
+                  child: TextButton(
                       onPressed: () {
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (ctx) => TestPage()));
+                            MaterialPageRoute(builder: (ctx) => MakerPage(
+                              mode: _selectedItem!.mode, cards: [],)));
                       },
-                      child: Text('Test page'))
-                ],
-              ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text("Let's Go",
+                              style: TextStyle(fontFamily: 'Caps-1', fontSize: 25, fontWeight: FontWeight.w600, color: Colors.black)),
+                          SizedBox(width: 30,),
+                          Icon(Icons.arrow_forward, color: Colors.black, size: 25,),
+                        ],
+                      )
+                  ),
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (ctx) => TestPage()));
+                    },
+                    child: Text('Test page'))
+              ],
             ),
           ),
         ),
-      ],
+      ),
+    );
+  }
+
+  _buildSmallLayout() {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage('assets/images/background.png')
+        )
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Image.asset('assets/images/yuji.png', fit: BoxFit.contain, width: width * 0.8,),
+                Text('Card Maker', style: TextStyle(fontFamily: 'Caps-1', fontSize: 55),),
+                Text('Select mode', style: TextStyle(fontFamily: 'Caps-1', fontSize: 30),),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.dropdownButton.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                        color: Colors.black, style: BorderStyle.solid, width: 2.2),
+                  ),
+                  child: DropdownButton<Mode>(
+                    icon: Icon(Icons.arrow_drop_down, color: Colors.black, size: 30,),
+                    dropdownColor: Colors.white,
+                    value: _selectedItem,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedItem = value;
+                      });
+                    },
+                    items: _dropdownMenuItems,
+                  ),
+                ),
+                SizedBox(height: 10,),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.dropdownButton.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                        color: Colors.black, style: BorderStyle.solid, width: 2.2),
+                  ),
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (ctx) => MakerPage(
+                              mode: _selectedItem!.mode, cards: [],)));
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text("Let's Go",
+                              style: TextStyle(fontFamily: 'Caps-1', fontSize: 25, fontWeight: FontWeight.w600, color: Colors.black)),
+                          SizedBox(width: 30,),
+                          Icon(Icons.arrow_forward, color: Colors.black, size: 25,),
+                        ],
+                      )
+                  ),
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (ctx) => TestPage()));
+                    },
+                    child: Text('Test page'))
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
