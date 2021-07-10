@@ -184,6 +184,7 @@ class _MakerPageState extends State<MakerPage> {
             )
         ),
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             elevation: 0.5,
@@ -331,7 +332,7 @@ class _MakerPageState extends State<MakerPage> {
                                 : TextInputType.text,
                 maxLength: type == wtf.name ? 20
                           : type == wtf.cardType ? 25
-                          : type == wtf.desc ? 50 : 4,
+                          : type == wtf.desc ? 100 : 4,
                 inputFormatters: type == wtf.degree
                     ? <TextInputFormatter>[
                         FilteringTextInputFormatter.allow(RegExp('[0-9-,]+'))
@@ -563,8 +564,8 @@ class _MakerPageState extends State<MakerPage> {
                                 child: GestureDetector(
                                   onTap: () => _getImage(0),
                                   child: Container(
-                                    color: AppColors.placeHolder,
-                                    height: height * 0.3,
+                                    color: Colors.white,
+                                    height: height * 0.4,
                                     width: width * 0.65,
                                     child: InteractiveViewer(
                                       boundaryMargin: const EdgeInsets.all(20.0),
@@ -824,8 +825,8 @@ class _MakerPageState extends State<MakerPage> {
                           child: GestureDetector(
                             onTap: () => _getImage(0),
                             child: Container(
-                              color: AppColors.placeHolder,
-                              height: height * 0.3,
+                              color: Colors.white,
+                              height: height * 0.4,
                               width: width * 0.65,
                               child: InteractiveViewer(
                                 boundaryMargin: const EdgeInsets.all(20.0),
@@ -1146,8 +1147,8 @@ class _MakerPageState extends State<MakerPage> {
                           child: GestureDetector(
                             onTap: () => _getImage(0),
                             child: Container(
-                              color: AppColors.placeHolder,
-                              height: height * 0.3,
+                              color: Colors.white,
+                              height: height * 0.4,
                               width: width * 0.65,
                               child: InteractiveViewer(
                                 boundaryMargin: const EdgeInsets.all(20.0),
@@ -1467,8 +1468,8 @@ class _MakerPageState extends State<MakerPage> {
                                             child: GestureDetector(
                                               onTap: () => _getImage(0),
                                               child: Container(
-                                                color: AppColors.placeHolder,
-                                                height: height * 0.3,
+                                                color: Colors.white,
+                                                height: height * 0.4,
                                                 width: width * 0.65,
                                                 child: InteractiveViewer(
                                                   boundaryMargin: const EdgeInsets.all(20.0),
@@ -1675,7 +1676,7 @@ class _MakerPageState extends State<MakerPage> {
                                               )),
                                           /// card name/desc
                                           Positioned(
-                                              bottom: 90,
+                                              bottom: 100,
                                               left: 40,
                                               child: InkWell(
                                                 onTap: () => editInput(wtf.cardType),
@@ -1688,16 +1689,20 @@ class _MakerPageState extends State<MakerPage> {
                                                 ),
                                               )),
                                           Positioned(
-                                              bottom: 70,
+                                              bottom: 50,
                                               left: 40,
-                                              child: InkWell(
-                                                onTap: () => editInput(wtf.desc),
-                                                child: Text(
-                                                  _makerStorage.decs,
-                                                  style: TextStyle(
-                                                      fontFamily: 'Caps-1',
-                                                      fontSize: 17,
-                                                      fontWeight: FontWeight.bold),
+                                              child: Container(
+                                                height: 50,
+                                                width: width * 0.6,
+                                                child: InkWell(
+                                                  onTap: () => editInput(wtf.desc),
+                                                  child: Text(
+                                                    _makerStorage.decs,
+                                                    style: TextStyle(
+                                                        fontFamily: 'Caps-1',
+                                                        fontSize: 17,
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
                                                 ),
                                               )),
                                           /// atk/def
@@ -1773,66 +1778,69 @@ class _MakerPageState extends State<MakerPage> {
                               ),
                             ),
           /// btn save
-          Container(
-            height: 50,
-            width: 100,
-            decoration: BoxDecoration(
-              color: AppColors.dropdownButton.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(40),
-              border: Border.all(
-                  color: Colors.black, style: BorderStyle.solid, width: 2.2),
-            ),
-            child: TextButton(
-                onPressed: () => imagePath.isNotEmpty ? _save() : {},
-                child: Text("Save",
-                    style: TextStyle(fontFamily: 'Caps-1', fontSize: 24,
-                        fontWeight: FontWeight.w600, color: imagePath.isNotEmpty ? Colors.black : Colors.black38)),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Container(
+              height: 50,
+              width: 100,
+              decoration: BoxDecoration(
+                color: AppColors.dropdownButton.withOpacity(0.6),
+                borderRadius: BorderRadius.circular(40),
+                border: Border.all(
+                    color: Colors.black, style: BorderStyle.solid, width: 2.2),
+              ),
+              child: TextButton(
+                  onPressed: () => imagePath.isNotEmpty ? _save() : {},
+                  child: Text("Save",
+                      style: TextStyle(fontFamily: 'Caps-1', fontSize: 24,
+                          fontWeight: FontWeight.w600, color: imagePath.isNotEmpty ? Colors.black : Colors.black38)),
+              ),
             ),
           ),
           /// theme select
           mode == 1 ? SizedBox()
           : mode == 2 ? SizedBox()
-          : Container(
-            color: Colors.white.withOpacity(0.4),
-            height: isLargerScreen ? height * 0.150 : height * 0.140,
-            width: double.infinity,
-            child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _makerStorage.cardType.length,
-                itemBuilder: (context, index) {
-                  final item = _makerStorage.cardType[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          _makerStorage.initType = item;
-                        });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                width: 50,
-                                height: 60,
-                                color: Colors.white,
-                              ),
-                              Image.asset(item.image, width: isLargerScreen ? 60 : 35),
-                            ],
-                          ),
-                          Text(item.name,
-                            style: TextStyle(
-                                fontFamily: 'Caps-1',
-                                fontSize: isLargerScreen ? 20 : 14),
-                          ),
-                        ],
+          : Expanded(
+            child: Container(
+              color: Colors.white.withOpacity(0.4),
+              width: double.infinity,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _makerStorage.cardType.length,
+                  itemBuilder: (context, index) {
+                    final item = _makerStorage.cardType[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _makerStorage.initType = item;
+                          });
+                        },
+                        child: Column(
+                          children: [
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  width: 50,
+                                  height: 60,
+                                  color: Colors.white,
+                                ),
+                                Image.asset(item.image, width: 60),
+                              ],
+                            ),
+                            Text(item.name,
+                              style: TextStyle(
+                                  fontFamily: 'Caps-1',
+                                  fontSize: 20),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+            ),
           )
         ],
       ),
@@ -3128,67 +3136,71 @@ class _MakerPageState extends State<MakerPage> {
             ),
           ),
           /// btn save
-          Container(
-            height: isLargerScreen ? 50 : 30,
-            width: isLargerScreen ? 100 : 60,
-            decoration: BoxDecoration(
-              color: AppColors.dropdownButton.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(40),
-              border: Border.all(
-                  color: Colors.black, style: BorderStyle.solid, width: 2.2),
-            ),
-            child: TextButton(
-              onPressed: () => imagePath.isNotEmpty ? _save() : {},
-              child: Text("Save",
-                  style: TextStyle(fontFamily: 'Caps-1', fontSize: isLargerScreen ? 24 : 24/2,
-                      fontWeight: FontWeight.w600, color: imagePath.isNotEmpty ? Colors.black : Colors.black38)),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Container(
+              height: 30,
+              width: 60,
+              decoration: BoxDecoration(
+                color: AppColors.dropdownButton.withOpacity(0.6),
+                borderRadius: BorderRadius.circular(40),
+                border: Border.all(
+                    color: Colors.black, style: BorderStyle.solid, width: 2.2),
+              ),
+              child: TextButton(
+                onPressed: () => imagePath.isNotEmpty ? _save() : {},
+                child: Text("Save",
+                    style: TextStyle(fontFamily: 'Caps-1', fontSize: 24/2,
+                        fontWeight: FontWeight.w600, color: imagePath.isNotEmpty ? Colors.black : Colors.black38)),
+              ),
             ),
           ),
           /// theme select
           mode == 1 ? SizedBox()
               : mode == 2 ? SizedBox()
-              : Container(
+              : Expanded(
+                child: Container(
             color: Colors.white.withOpacity(0.4),
-            height: height * 0.150,
             width: double.infinity,
             child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _makerStorage.cardType.length,
-                itemBuilder: (context, index) {
-                  final item = _makerStorage.cardType[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          _makerStorage.initType = item;
-                        });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                width: isLargerScreen ? 50 : 30,
-                                height: isLargerScreen ? 60 : 50,
-                                color: Colors.white,
-                              ),
-                              Image.asset(item.image, width: isLargerScreen ? 60 : 35),
-                            ],
-                          ),
-                          Text(item.name,
-                            style: TextStyle(
-                                fontFamily: 'Caps-1',
-                                fontSize: isLargerScreen ? 20 : 14),
-                          ),
-                        ],
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _makerStorage.cardType.length,
+                  itemBuilder: (context, index) {
+                    final item = _makerStorage.cardType[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _makerStorage.initType = item;
+                          });
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  width: 30,
+                                  height: 50,
+                                  color: Colors.white,
+                                ),
+                                Image.asset(item.image, width: 35),
+                              ],
+                            ),
+                            Text(item.name,
+                              style: TextStyle(
+                                  fontFamily: 'Caps-1',
+                                  fontSize: 14),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
-          )
+                    );
+                  }),
+          ),
+              )
         ],
       ),
     );
