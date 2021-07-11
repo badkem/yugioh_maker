@@ -15,6 +15,7 @@ class MakerPage extends StatefulWidget {
 
 class _MakerPageState extends State<MakerPage> {
   late double height, width;
+  late Box<History> dataBox;
   late Timer timer;
 
   String degree = '0';
@@ -59,26 +60,28 @@ class _MakerPageState extends State<MakerPage> {
   void _save() {
     try {
       screenController.capture().then((image) async {
-        await ImageGallerySaver.saveImage(image!,
-            quality: 100, name: '$fileName');
+        await ImageGallerySaver.saveImage(image!, quality: 100, name: '$fileName');
+        String base64Image = base64Encode(image);
+        History data = History(
+            cardType: _makerStorage.initType.image,
+            type: _makerStorage.initType.type,
+            attr: _makerStorage.initAttr.image,
+            level: _makerStorage.initLv,
+            name: _makerStorage.name,
+            image: imagePath,
+            base64Image: base64Image,
+            trapSpellType: _makerStorage.initTrapSpellType.image,
+            nameType: _makerStorage.nameType,
+            desc: _makerStorage.decs,
+            serialNumber: _makerStorage.number,
+            year: _makerStorage.year,
+            atk: _makerStorage.atk,
+            def: _makerStorage.def);
+        dataBox.add(data);
       });
     } catch (e) {
       print(e);
     } finally {
-      _historyStorage.saveHistory(History(
-          cardType: _makerStorage.initType.image,
-          type: _makerStorage.initType.type,
-          attr: _makerStorage.initAttr.image,
-          level: _makerStorage.initLv,
-          name: _makerStorage.name,
-          image: imagePath.isNotEmpty ? imagePath : null,
-          trapSpellType: _makerStorage.initTrapSpellType.image,
-          nameType: _makerStorage.nameType,
-          desc: _makerStorage.decs,
-          serialNumber: _makerStorage.number,
-          year: _makerStorage.year,
-          atk: _makerStorage.atk,
-          def: _makerStorage.def));
       showDialog(
           context: context,
           builder: (BuildContext builderContext) {
@@ -120,14 +123,13 @@ class _MakerPageState extends State<MakerPage> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => HistoryPage(storage: _historyStorage)),
+          builder: (context) => HistoryPage()),
     );
     if (result != null) {
       var json = jsonDecode(jsonEncode(result));
       History history = History.fromJson(json);
       setState(() {
         _makerStorage.name = history.name;
-        imagePath = history.image!;
         _makerStorage.decs = history.desc;
         _makerStorage.atk = history.atk;
         _makerStorage.def = history.def;
@@ -167,6 +169,12 @@ class _MakerPageState extends State<MakerPage> {
                     cards: widget.cards,
                   )));
     });
+  }
+
+  @override
+  void initState() {
+    dataBox = Hive.box<History>(dataBoxName);
+    super.initState();
   }
 
   @override

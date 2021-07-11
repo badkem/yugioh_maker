@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:yugioh_maker/model/model.dart';
 import 'package:yugioh_maker/page/page.dart';
 import 'package:yugioh_maker/page/theme/theme.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final document = await getApplicationDocumentsDirectory();
+  Hive.init(document.path);
+  Hive.registerAdapter(HistoryAdapter());
+  await Hive.openBox<History>(dataBoxName);
   runApp(MyApp());
 }
 

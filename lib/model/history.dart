@@ -1,13 +1,14 @@
-
 part of 'model.dart';
 
+@HiveType(typeId: 0)
 class History {
   History({
     required this.cardType,
     required this.type,
     required this.attr,
     required this.name,
-    this.image,
+    required this.image,
+    required this.base64Image,
     this.trapSpellType,
     required this.nameType,
     required this.desc,
@@ -18,18 +19,33 @@ class History {
     required this.def,
   });
 
+  @HiveField(0)
   int type;
+  @HiveField(1)
   int serialNumber;
+  @HiveField(2)
   int level;
+  @HiveField(3)
   String cardType;
+  @HiveField(4)
   String attr;
+  @HiveField(5)
   String name;
-  String? image;
+  @HiveField(6)
+  String image;
+  @HiveField(7)
+  String base64Image;
+  @HiveField(8)
   String? trapSpellType;
+  @HiveField(9)
   String nameType;
+  @HiveField(10)
   String desc;
+  @HiveField(11)
   String year;
+  @HiveField(12)
   String atk;
+  @HiveField(13)
   String def;
 
   factory History.fromJson(String str) => History.fromMap(json.decode(str));
@@ -50,6 +66,7 @@ class History {
     year: json["year"],
     atk: json["atk"],
     def: json["def"],
+    base64Image: json['base64Image'],
   );
 
   Map<String, dynamic> toMap() => {
@@ -59,6 +76,7 @@ class History {
     "trapSpellType": trapSpellType,
     "name": name,
     "image": image,
+    'base64Image': base64Image,
     "nameType": nameType,
     "desc": desc,
     "serialNumber": serialNumber,
