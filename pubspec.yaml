@@ -45,7 +45,6 @@ flutter:
     - assets/images/
     - assets/images/theme/
     - assets/images/attribute/
-    - assets/images/card_type/
     - assets/images/trap_spell_type/
   fonts:
     - family: Caps-1

@@ -146,12 +146,13 @@ class _SelectModeState extends State<SelectMode> {
                       )
                   ),
                 ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (ctx) => TestPage()));
-                    },
-                    child: Text('Test page'))
+                /// tét page
+                // TextButton(
+                //     onPressed: () {
+                //       Navigator.push(context,
+                //           MaterialPageRoute(builder: (ctx) => TestPage()));
+                //     },
+                //     child: Text('Test page'))
               ],
             ),
           ),
@@ -224,12 +225,13 @@ class _SelectModeState extends State<SelectMode> {
                       )
                   ),
                 ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (ctx) => TestPage()));
-                    },
-                    child: Text('Test page'))
+                /// tét page
+                // TextButton(
+                //     onPressed: () {
+                //       Navigator.push(context,
+                //           MaterialPageRoute(builder: (ctx) => TestPage()));
+                //     },
+                //     child: Text('Test page'))
               ],
             ),
           ),
