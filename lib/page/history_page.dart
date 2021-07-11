@@ -16,6 +16,7 @@ class _HistoryPageState extends State<HistoryPage> {
   late double height, width;
   bool _isMultiSelect = false;
   bool _isSelected = false;
+  var listSelect = <bool>[];
 
   @override
   void initState() {
@@ -60,15 +61,13 @@ class _HistoryPageState extends State<HistoryPage> {
                     TextButton.icon(
                         onPressed: () {
                           final Map<dynamic, History> historyMap = dataBox.toMap();
-                          dynamic itemKey;
                           historyMap.forEach((key, value) {
                             for(var item in _selectedItem) {
                               if(item == value)
-                                itemKey = key;
+                                dataBox.delete(key);
                             }
                           });
                           setState(() {
-                            dataBox.delete(itemKey);
                             _selectedItem.clear();
                             _isMultiSelect = false;
                           });
@@ -113,6 +112,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                             if(_isMultiSelect == true) {
                                               setState(() {
                                                 _isSelected = !_isSelected;
+                                                print(_isSelected);
                                                 if(_isSelected == true) {
                                                   _selectedItem.add(card);
                                                 } else {
@@ -175,7 +175,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                             width: width * 0.22,
                                             decoration: BoxDecoration(
                                                 border: Border.all(
-                                                    width: 4,
+                                                    width: 3,
                                                     color: _selectedItem.contains(card)
                                                         ? Colors.yellow
                                                         : Colors.transparent)),
@@ -195,6 +195,83 @@ class _HistoryPageState extends State<HistoryPage> {
             },
           ),
         ),
+    );
+  }
+
+  _test(History card, Uint8List bytes) {
+    return InkWell(
+      onTap: () {
+        if(_isMultiSelect == true) {
+          setState(() {
+            _isSelected = !_isSelected;
+            if(_isSelected == true) {
+              _selectedItem.add(card);
+            } else {
+              _selectedItem.removeWhere((element) => element == card);
+            }
+          });
+        } else {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("Overwrite current card!"),
+              content:
+              Text("Your current card will be replacement by this card!"),
+              actions: [
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                TextButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context, History(
+                        cardType: card.cardType,
+                        type: card.type,
+                        attr: card.attr,
+                        level: card.level,
+                        name: card.name,
+                        image: card.image,
+                        base64Image: '',
+                        trapSpellType: card.trapSpellType,
+                        nameType: card.nameType,
+                        desc: card.desc,
+                        serialNumber: card.serialNumber,
+                        year: card.year,
+                        atk: card.atk,
+                        def: card.def));
+                  },
+                )
+              ],
+            ),
+          );
+        }
+      },
+      onLongPress: () {
+        setState(() {
+          _isMultiSelect = !_isMultiSelect;
+          if(_isMultiSelect == true) {
+            _selectedItem.add(card);
+          } else {
+            _selectedItem.clear();
+          }
+        });
+      },
+      child: Container(
+        height: double.infinity,
+        width: width * 0.22,
+        decoration: BoxDecoration(
+            border: Border.all(
+                width: 4,
+                color: _selectedItem.contains(card)
+                    ? Colors.yellow
+                    : Colors.transparent)),
+        child: Image.memory(bytes, gaplessPlayback: true,),
+      ),
     );
   }
 }
