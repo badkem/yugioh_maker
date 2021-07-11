@@ -129,6 +129,7 @@ class _MakerPageState extends State<MakerPage> {
       var json = jsonDecode(jsonEncode(result));
       History history = History.fromJson(json);
       setState(() {
+        imagePath = history.image;
         _makerStorage.name = history.name;
         _makerStorage.decs = history.desc;
         _makerStorage.atk = history.atk;
@@ -568,12 +569,12 @@ class _MakerPageState extends State<MakerPage> {
                             children: [
                               /// pick file
                               Positioned(
-                                top: 70,
+                                bottom: 70,
                                 child: GestureDetector(
                                   onTap: () => _getImage(0),
                                   child: Container(
                                     color: Colors.white,
-                                    height: height * 0.4,
+                                    height: 350,
                                     width: width * 0.65,
                                     child: InteractiveViewer(
                                       boundaryMargin: const EdgeInsets.all(20.0),
@@ -829,12 +830,12 @@ class _MakerPageState extends State<MakerPage> {
                       children: [
                         /// pick file
                         Positioned(
-                          top: 70,
+                          bottom: 70,
                           child: GestureDetector(
                             onTap: () => _getImage(0),
                             child: Container(
                               color: Colors.white,
-                              height: height * 0.4,
+                              height: 350,
                               width: width * 0.65,
                               child: InteractiveViewer(
                                 boundaryMargin: const EdgeInsets.all(20.0),
@@ -1151,12 +1152,12 @@ class _MakerPageState extends State<MakerPage> {
                       children: [
                         /// pick file
                         Positioned(
-                          top: 70,
+                          bottom: 70,
                           child: GestureDetector(
                             onTap: () => _getImage(0),
                             child: Container(
                               color: Colors.white,
-                              height: height * 0.4,
+                              height: 350,
                               width: width * 0.65,
                               child: InteractiveViewer(
                                 boundaryMargin: const EdgeInsets.all(20.0),
@@ -1472,12 +1473,12 @@ class _MakerPageState extends State<MakerPage> {
                                         children: [
                                           /// pick file
                                           Positioned(
-                                            top: 70,
+                                            bottom: 70,
                                             child: GestureDetector(
                                               onTap: () => _getImage(0),
                                               child: Container(
                                                 color: Colors.white,
-                                                height: height * 0.4,
+                                                height: 350,
                                                 width: width * 0.65,
                                                 child: InteractiveViewer(
                                                   boundaryMargin: const EdgeInsets.all(20.0),
