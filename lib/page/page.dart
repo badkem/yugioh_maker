@@ -16,7 +16,6 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yugioh_maker/model/model.dart';
 import 'package:yugioh_maker/provider/provider.dart';
-import 'widgets/widgets.dart';
 import 'theme/theme.dart';
 
 part 'history_page.dart';

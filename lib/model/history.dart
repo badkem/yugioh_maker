@@ -47,6 +47,7 @@ class History {
   String atk;
   @HiveField(13)
   String def;
+  bool isSelected = false;
 
   factory History.fromJson(String str) => History.fromMap(json.decode(str));
 
